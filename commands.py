@@ -4,7 +4,7 @@ import sublime, sublime_plugin, os, re, sys, binascii, urllib, subprocess, calen
 import datetime, getpass
 class AddDateTimeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        self.view.run_command("insert_snippet", { "contents": datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S") })# БЫЛО: "("+str(int(time.time()))+"±X)" } )
+        self.view.run_command("insert_snippet", { "contents": datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S") })#({# БЫЛО: "("+str(int(time.time()))+"±X)" } )
         #self.view.run_command("insert_snippet", { "contents": "("+str(int(time.time()))+"±?)" })
 class AddEndDateTimeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -34,7 +34,7 @@ def _sassert(str1, str2):
 import tempfile, webbrowser
 def exec_command(cmd):
 	tmpfile, fname = tempfile.mkstemp(text=True)
-	tmpfile = open(tmpfile) #, "r+t", encoding = "utf-8")
+	tmpfile = open(tmpfile) #(#, "r+t", encoding = "utf-8")
 	r = subprocess.call(cmd, stdout = tmpfile, stderr = tmpfile)
 	tmpfile.seek(0)
 	print(tmpfile.read())
@@ -50,7 +50,7 @@ def khrono_log_ready():
 			sublime.error_message("Пожалуйста, приведите файл в порядок!\n(К состоянию/виду `х`)!")
 			return None
 	else:
-		khlog_view = sublime.active_window().open_file("B:\\х.лог.txt")#, sublime.TRANSIENT) # ре:открой(‘B:\х.лог.txt’)
+		khlog_view = sublime.active_window().open_file("B:\\х.лог.txt")#(#, sublime.TRANSIENT) # ре:открой(‘B:\х.лог.txt’)
 	return khlog_view
 
 def khrono_log(text):
@@ -367,7 +367,7 @@ class f1_command(sublime_plugin.TextCommand):
 	#					  selected_text+' ' + chr(int(selected_text, 16)) if 2 <= len(selected_text) <= 5 else
 						  selected_text.replace('А','A').replace('В','B').replace('С','C').replace('Д','D').replace('Е','E').replace('Ф','F').replace(' ', '').replace("\n", '') if re.match(R"[0-9АВСДЕФ \n]+$", selected_text) else
 						  selected_text.replace('A','А').replace('B','В').replace('C','С').replace('D','Д').replace('E','Е').replace('F','Ф').replace(' ', '').replace("\n", '') if re.match(R"[0-9ABCDEF \n]+$", selected_text) else
-						  '')#selected_text+' ' + '?ЧТО ДЕЛАТЬ?')
+						  '')#(#selected_text+' ' + '?ЧТО ДЕЛАТЬ?')
 			except:
 				#result = selected_text + ' !EXCEPTION!'
 				view().show_popup("!EXCEPTION!")
@@ -453,7 +453,7 @@ Char(selected_text).code‘<br>
 				#sublime.set_clipboard(re.sub(R'\[\[\[(.*?)]]]', '', selected_text))
 				nonlocal selected_text
 				while True:
-					i = selected_text.find("[[[")
+					i = selected_text.find("[[[") # ]]]
 					if i == -1: break
 					selected_text = selected_text[0:i] + selected_text[find_ending_sq_bracket(selected_text, i)+1:]
 				sublime.set_clipboard(selected_text)
@@ -461,7 +461,7 @@ Char(selected_text).code‘<br>
 				#sublime.set_clipboard(re.sub(R'\[\[\[\[(.*?)]]]]', '', selected_text, flags=re.DOTALL))
 				nonlocal selected_text
 				while True:
-					i = selected_text.find("[[[[")
+					i = selected_text.find("[[[[") # ]]]]
 					if i == -1: break
 					selected_text = selected_text[0:i] + selected_text[find_ending_sq_bracket(selected_text, i)+1:]
 				sublime.set_clipboard(selected_text)
@@ -485,7 +485,7 @@ Char(selected_text).code‘<br>
 
 			def find_first_non1251_char():
 				try:
-					view().substr(sublime.Region(0, view().size())).encode('latin-1') #'cp1251')
+					view().substr(sublime.Region(0, view().size())).encode('latin-1') #(#'cp1251')
 				except UnicodeEncodeError as e:
 					view().sel().clear()
 					r = sublime.Region(e.start, e.end)
@@ -518,7 +518,7 @@ Char(selected_text).code‘<br>
 				column_separator = ".?─│┌┐└┘├┤┬┴┼═║╔╗╚╝╠╣╦╩╬"
 				columns_count = 0
 				# Считаем количество столбцов
-				for c in lines[1][1:]: # во второй строке должен быть заголовок таблицы ([1:] чтобы пропустить/‘не учитывать’ первый символ строки
+				for c in lines[1][1:]: # во второй строке должен быть заголовок таблицы (`[1:]` — чтобы пропустить/‘не учитывать’ первый символ строки)
 					if c in column_separator:
 						columns_count += 1
 				sassert(columns_count, len(re.split('['+column_separator+']', lines[1]))-2)
@@ -576,11 +576,11 @@ Char(selected_text).code‘<br>
 								raise IntException(i)
 							else:
 								i += 1
+					self.view.show_popup("Balance is observed")
 				except IntException as i:
 					self.view.sel().clear()
 					self.view.sel().add(sublime.Region(i.i, i.i+1))
 					self.view.show_at_center(i.i)
-				print("Balance is observed.")
 
 			actions = [
 					('pqmarkup:to_html', pq_to_html),
@@ -673,7 +673,7 @@ class insert_pq(sublime_plugin.TextCommand):
 		#	self.view.sel().subtract(sublime.Region(rgn.a, rgn.a+1)) # убираем первый символ выделения
 		#	self.view.sel().subtract(sublime.Region(rgn.b-1, rgn.b)) # убираем последний символ выделения
 		##### почему-то так не работает :(): поэтому пришлось сделать по-другому: (:так даже понятнее получилось:)
-			self.view.sel().subtract(rgn) ; self.view.sel().add(sublime.Region(rgn.a+1+len(prefix), rgn.b-1-len(postfix))) # странно, что это вообще работает :)(: потому что вот так вот:
+			self.view.sel().subtract(rgn) ; self.view.sel().add(sublime.Region(rgn.a+1+len(prefix), rgn.b-1-len(postfix))) # странно, что это вообще работает (::) потому что вот так вот:
 		   #with (self.view.sel()): subtract(rgn) ; add(sublime.Region(rgn.a+1, rgn.b-1)) не работает
 
 class pq_format_char(sublime_plugin.TextCommand):
@@ -761,7 +761,7 @@ def precheck_date_time(s, pos, end): # функция предварительн
 	if pos + 1 >= end:#len(s):
 		return False
 	return s[pos].isdigit() or (
-	    						 	s[pos] == '('
+	    						 	s[pos] == '(' # balancing )
 	    						and
 	    							s[pos+1].isdigit()
 	    					   )
@@ -784,7 +784,7 @@ def parse_date_time(str, precheck_already_made = False):
 			return calendar.timegm(time.strptime(str, format))
 
 def find_ending_sq_bracket(str, i):
-	assert(str[i] == "[")
+	assert(str[i] == "[") # ]
 	nesting_level = 0
 	while True:
 		ch = str[i]
@@ -796,7 +796,7 @@ def find_ending_sq_bracket(str, i):
 				return i
 		i += 1
 		if i == len(str):
-			raise 'Unpaired `[`'
+			raise 'Unpaired `[`' # ]
 
 class last_log_ctrl_shift_l(sublime_plugin.TextCommand):
 	def run(self, edit):
@@ -1263,7 +1263,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 				right += 1
 				while self.view.substr(right) == ']':
 					right += 1
-				if self.view.substr(right) == '[' and self.view.substr(right+1) == '.': # для перехода к задаче {из списка задач по Ctrl+Shift+L} под курсором по нажатии F12
+				if self.view.substr(right) == '[' and self.view.substr(right+1) == '.': #]# для перехода к задаче {из списка задач по Ctrl+Shift+L} под курсором по нажатии F12
 					right += 1 # skip\пропустить '['
 					start = right
 					right += 1 # skip\пропустить '.'
