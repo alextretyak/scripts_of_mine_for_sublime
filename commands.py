@@ -548,6 +548,40 @@ Char(selected_text).code‘<br>
 				self.view.find_all("(\d+)Р", 0, R"\1", extractions)
 				self.view.show_popup(str(sum([int(e) for e in extractions])))
 
+			def balance_all_char_pairs():
+				text = self.view.substr(sublime.Region(0, self.view.size()))
+				class IntException(BaseException):
+					def __init__(self, i):
+						self.i = i
+				try:
+					for pair in ['‘’', '()', '{}', '[]']:
+						i = 0
+						while i < len(text):
+							if text[i] == pair[0]:
+								start_i = i
+								nesting_level = 1
+								i += 1
+								while True:
+									if i == len(text):
+										raise IntException(start_i)
+									ch = text[i]
+									i += 1
+									if ch == pair[0]:
+										nesting_level += 1
+									elif ch == pair[1]:
+										nesting_level -= 1
+										if nesting_level == 0:
+											break
+							elif text[i] == pair[1]:
+								raise IntException(i)
+							else:
+								i += 1
+				except IntException as i:
+					self.view.sel().clear()
+					self.view.sel().add(sublime.Region(i.i, i.i+1))
+					self.view.show_at_center(i.i)
+				print("Balance is observed.")
+
 			actions = [
 					('pqmarkup:to_html', pq_to_html),
 					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
@@ -565,6 +599,7 @@ Char(selected_text).code‘<br>
 					('split_selection_into_characters \ Разбить выделение на символы', split_selection_into_characters),
 					('Beautify table \ Сделать таблицу красивой', beautify_table),
 					('Count total cost/expenses \ Подсчитать сумму расходов', count_total_expenses),
+					('Balance all paired spec symbols/characters ‘’(){}[]', balance_all_char_pairs),
 				]
 			# Условные\Conditional actions
 			clipbrd = sublime.get_clipboard()
@@ -1049,12 +1084,12 @@ def find_beginning_pair_quote(str, i): # ищет начало ‘строки�
 	nesting_level = 0
 	while True:
 		ch = str[i]
-		if ch == "’":
-			nesting_level += 1
-		elif ch == "‘":
+		if ch == "‘":
 			nesting_level -= 1
 			if nesting_level == 0:
 				return i
+		elif ch == "’":
+			nesting_level += 1
 		if i == 0:
 			raise 'Unpaired quote'
 		i -= 1
@@ -1191,7 +1226,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 					sq_brackets = sublime.Region(sq_brackets.begin()-1)
 					continue
 				# This is file reference\Это ссылка на файл/‘место в файле’
-				filename = self.view.substr(sq_brackets)[1:-1]
+				filename = self.view.substr(sq_brackets)[1:-1] # balancing ‘
 				if filename[-1] == '’':
 					begq = find_beginning_pair_quote(filename, len(filename)-1)
 					if filename[begq-1] == ' ':
@@ -1238,7 +1273,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 							fname = between = self.view.substr(sublime.Region(start, right))
 							colon_pos = between.find(':')
 							if colon_pos != -1:
-								fname = between[:colon_pos]
+								fname = between[:colon_pos] # balancing ‘
 #								if between[colon_pos+1] == "’":
 							sublime.active_window().open_file(dropbox_dir() +"/"+ fname)
 							break
