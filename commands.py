@@ -574,7 +574,7 @@ class f1_command(sublime_plugin.TextCommand):
 					def __init__(self, i):
 						self.i = i
 				try:
-					for pair in ['‘’', '()', '{}', '[]']:
+					for pair in ['‘’', '()', '{}', '[]']: # \\\ #L(pair) [‘‘’’, ‘()’, ‘{}’, ‘[]’] \\ либо признак compile-time-unroll, короче, это должно быть явно/чётко видно по исходному коду, что цикл разворачивается в compile-time или нет (если не указать разворачивать цикл, а компилятор посчитает что с >66.6% вероятностью целесообразно его размернуть, тогда компилятор будет предлагать поставить указание для разворачивания цикла)
 						i = 0
 						while i < len(text):
 							if text[i] == pair[0]:
@@ -589,10 +589,18 @@ class f1_command(sublime_plugin.TextCommand):
 									if ch == pair[0]:
 										nesting_level += 1
 									elif ch == pair[1]:
+										if pair[1] == ')': # это должна быть compile-time (а не run-time) проверка # \\\ I pair[1] == ‘)’
+											if text[i-1:i] == ':' and text[i+1:i+3] == '(:':                       # \\\    I text[(i-1, i+1..+2)] == ‘:(:’
+												i += 2 # пропускаем, чтобы смайлы :)(: не [ломали/]портили баланс
+												continue
 										nesting_level -= 1
 										if nesting_level == 0:
 											break
 							elif text[i] == pair[1]:
+								if pair[1] == ')': # это должна быть compile-time (а не run-time) проверка # \\\ I pair[1] == ‘)’
+									if text[i-1:i] == ':' and text[i+1:i+3] == '(:':                       # \\\    I text[(i-1, i+1..+2)] == ‘:(:’
+										i += 2 # пропускаем, чтобы смайлы :)(: не [ломали/]портили баланс
+										continue
 								raise IntException(i)
 							else:
 								i += 1
