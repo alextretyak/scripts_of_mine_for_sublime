@@ -1,4 +1,4 @@
-import sublime, sublime_plugin, os, re, sys, binascii, urllib, subprocess, calendar, time, copy, unicodedata
+import sublime, sublime_plugin, os, re, sys, binascii, urllib, subprocess, calendar, time, copy, unicodedata, inspect
 
 #ИЗ http://stackoverflow.com/questions/11879481/can-i-add-date-time-for-sublime-snippet
 import datetime, getpass
@@ -331,7 +331,27 @@ sassert(box_drawing("""
 """)
 
 class f1_command(sublime_plugin.TextCommand):
-	def run(self, edit, shift_key_pressed = False):
+	def remove_all_balanced_chars_pairs(self, edit):
+		text = self.view.substr(sublime.Region(0, self.view.size()))
+		line_end = -1
+		erase_chars = []
+		while line_end < len(text):
+			line_start = line_end + 1
+			line_end = text.find("\n", line_start)
+			if line_end == -1:
+				line_end = len(text)
+			for pair in ['‘’', '()', '{}', '[]']:
+				cnt = text.count(pair[0], line_start, line_end)
+				if cnt > 0 and cnt == text.count(pair[1], line_start, line_end):
+					for c in re.compile("[" + pair[0] + ("\\" if pair[1] == ']' else '') + pair[1] + "]").finditer(text, line_start, line_end):
+						erase_chars.append(c.start())
+		for pos in sorted(erase_chars, reverse = True):
+			self.view.erase(edit, sublime.Region(pos, pos+1))
+
+	def run(self, edit, shift_key_pressed = False, redirect_method = None):
+		if redirect_method != None:
+			getattr(self, redirect_method)(edit)
+
 		selected_text = self.view.substr(self.view.sel()[0])
 		result = ''
 
@@ -383,61 +403,61 @@ class f1_command(sublime_plugin.TextCommand):
 
 		if result == '':
 
-			#
-		   #if len(selected_text) == 1 and len(self.view.sel()) == 1: # выбран только один символ — показываем информацию по нему\show character info
-			if len(selected_text) == 1                              : # выбран только один символ — показываем информацию по нему\show character info
-				jhjh = []
-				for selected_text in self.view.sel():                          # (red:selection L(selected_text)
-				   jhjh+=[(self.view.substr(selected_text),selected_text.b)]   #    [+] (|self.view.substr(selected_text), selected_text.b|)) L(selected_text)
-				gdfgh = []                                                     #
-				for selected_text in jhjh:                                     #       [+] selected_text[0]‘<br>’selected_text[0].code.dec‘<br>’selected_text[0].code.hex‘<br>’selected_text[0].code.oct‘<br>’unicodedata:name(selected_text[0], "!EXCEPTION!")
-				   gdfgh += [selected_text[0] + "<br>" + str(ord(selected_text[0])) + "<br>" + hex(ord(selected_text[0])) + "<br>" + oct(ord(selected_text[0])) + "<br>" + unicodedata.name(selected_text[0], "!EXCEPTION!")]
-				view().show_popup((3*"<br>").join(gdfgh), max_height=sys.maxsize)
-				return
-			"""	:view.show_popup(
-Char(selected_text).code‘<br>
-’hex(Char(selected_text).code)‘<br>
-’unicodedata:name(selected_text, "!EXCEPTION!"))
-"""
-
-			#+(1476744520±?)'‘
-			# Всплывающее окно по дате в таком формате: (1476744520±?)
-			cu_brackets = self.view.sel()[0]
-			for l in range(1):
-				cu_brackets = find_matching_cu_brackets(cu_brackets)
-				if cu_brackets == None:
-					break
-				cu_str = self.view.substr(sublime.Region(cu_brackets.begin(), cu_brackets.end()))
-				r = re.match(R"^\((?:(\d+)±[?ХXхx]|[хxХX?]±(\d+))\)$", cu_str)
-				if r:
-					view().show_popup(datetime.datetime.fromtimestamp(int(r.group(1) or r.group(2))).strftime("%Y.%m.%d %H:%M:%S"))
+			if not shift_key_pressed:
+			   #if len(selected_text) == 1 and len(self.view.sel()) == 1: # выбран только один символ — показываем информацию по нему\show character info
+				if len(selected_text) == 1                              : # выбран только один символ — показываем информацию по нему\show character info
+					jhjh = []
+					for selected_text in self.view.sel():                          # (red:selection L(selected_text)
+					   jhjh+=[(self.view.substr(selected_text),selected_text.b)]   #    [+] (|self.view.substr(selected_text), selected_text.b|)) L(selected_text)
+					gdfgh = []                                                     #
+					for selected_text in jhjh:                                     #       [+] selected_text[0]‘<br>’selected_text[0].code.dec‘<br>’selected_text[0].code.hex‘<br>’selected_text[0].code.oct‘<br>’unicodedata:name(selected_text[0], "!EXCEPTION!")
+					   gdfgh += [selected_text[0] + "<br>" + str(ord(selected_text[0])) + "<br>" + hex(ord(selected_text[0])) + "<br>" + oct(ord(selected_text[0])) + "<br>" + unicodedata.name(selected_text[0], "!EXCEPTION!")]
+					view().show_popup((3*"<br>").join(gdfgh), max_height=sys.maxsize)
 					return
-			#(‘’)’'
+				"""	:view.show_popup(
+	Char(selected_text).code‘<br>
+	’hex(Char(selected_text).code)‘<br>
+	’unicodedata:name(selected_text, "!EXCEPTION!"))
+	"""
 
-			#Этот код показывает разницу (количество секунд) между двумя выделенными датами
-			if len(self.view.sel()) == 2 and parse_date_time(self.view.substr(self.view.sel()[0])) and parse_date_time(self.view.substr(self.view.sel()[1])):
-				view().show_popup(str(
-				  parse_date_time(self.view.substr(self.view.sel()[1]))
-				- parse_date_time(self.view.substr(self.view.sel()[0]))))
-				return
+				#+(1476744520±?)'‘
+				# Всплывающее окно по дате в таком формате: (1476744520±?)
+				cu_brackets = self.view.sel()[0]
+				for l in range(1):
+					cu_brackets = find_matching_cu_brackets(cu_brackets)
+					if cu_brackets == None:
+						break
+					cu_str = self.view.substr(sublime.Region(cu_brackets.begin(), cu_brackets.end()))
+					r = re.match(R"^\((?:(\d+)±[?ХXхx]|[хxХX?]±(\d+))\)$", cu_str)
+					if r:
+						view().show_popup(datetime.datetime.fromtimestamp(int(r.group(1) or r.group(2))).strftime("%Y.%m.%d %H:%M:%S"))
+						return
+				#(‘’)’'
 
-			# Если курсор/выделение находится внутри [-невыполненной-] задачи, то помечаем её как [+выполненную+]
-			sq_brackets = None
-			if selected_text.startswith('[-') and selected_text.endswith('-]'): # либо если задача выделена целиком (что происходит по нажатии F12 в списке ДЕЛА)
-				sq_brackets = self.view.sel()[0]
-			else: # if selected_text == '': # разрешаем/допускаем также случай, когда выделен текст внутри задачи (что происходит по нажатии F12 в списке дел под календарём)
-				sq_brackets = find_matching_sq_brackets(self.view.sel()[0])
-			if sq_brackets:
-				sq_brackets.a += 1
-				sq_brackets.b -= 1
-				sq_str = self.view.substr(sq_brackets)
-				if sq_str[0] == '-' and sq_str[-1] == '-':
-					self.view.sel().clear()
-				#	self.view.sel().add(sublime.Region(sq_brackets.a, sq_brackets.a+1))
-					self.view.sel().add(sublime.Region(sq_brackets.b-1, sq_brackets.b))
-					self.view.replace(edit, sublime.Region(sq_brackets.a, sq_brackets.a+1), '+')
-					self.view.replace(edit, sublime.Region(sq_brackets.b-1, sq_brackets.b), '+')
+				#Этот код показывает разницу (количество секунд) между двумя выделенными датами
+				if len(self.view.sel()) == 2 and parse_date_time(self.view.substr(self.view.sel()[0])) and parse_date_time(self.view.substr(self.view.sel()[1])):
+					view().show_popup(str(
+					  parse_date_time(self.view.substr(self.view.sel()[1]))
+					- parse_date_time(self.view.substr(self.view.sel()[0]))))
 					return
+
+				# Если курсор/выделение находится внутри [-невыполненной-] задачи, то помечаем её как [+выполненную+]
+				sq_brackets = None
+				if selected_text.startswith('[-') and selected_text.endswith('-]'): # либо если задача выделена целиком (что происходит по нажатии F12 в списке ДЕЛА)
+					sq_brackets = self.view.sel()[0]
+				else: # if selected_text == '': # разрешаем/допускаем также случай, когда выделен текст внутри задачи (что происходит по нажатии F12 в списке дел под календарём)
+					sq_brackets = find_matching_sq_brackets(self.view.sel()[0])
+				if sq_brackets:
+					sq_brackets.a += 1
+					sq_brackets.b -= 1
+					sq_str = self.view.substr(sq_brackets)
+					if sq_str[0] == '-' and sq_str[-1] == '-':
+						self.view.sel().clear()
+					#	self.view.sel().add(sublime.Region(sq_brackets.a, sq_brackets.a+1))
+						self.view.sel().add(sublime.Region(sq_brackets.b-1, sq_brackets.b))
+						self.view.replace(edit, sublime.Region(sq_brackets.a, sq_brackets.a+1), '+')
+						self.view.replace(edit, sublime.Region(sq_brackets.b-1, sq_brackets.b), '+')
+						return
 
 			def pq_to_html():
 				pq_text = selected_text
@@ -600,6 +620,7 @@ Char(selected_text).code‘<br>
 					('Beautify table \ Сделать таблицу красивой', beautify_table),
 					('Count total cost/expenses \ Подсчитать сумму расходов', count_total_expenses),
 					('Balance all paired spec symbols/characters ‘’(){}[]', balance_all_char_pairs),
+					('Remove all balanced pairs of spec symbols ‘’(){}[]', self.remove_all_balanced_chars_pairs),
 				]
 			# Условные\Conditional actions
 			clipbrd = sublime.get_clipboard()
@@ -612,7 +633,7 @@ Char(selected_text).code‘<br>
 						sublime.active_window().show_input_panel("RENAME", clipbrd[1:-1], on_done, None, None)
 				actions.insert(0, ("FileOps:RENAME", rename))
 
-			sublime.active_window().show_quick_panel([it[0] for it in actions], lambda i: actions[i][1]() if i != -1 else None)
+			sublime.active_window().show_quick_panel([it[0] for it in actions], lambda i: (self.view.run_command("f1", {"redirect_method": actions[i][1].__name__}) if inspect.ismethod(actions[i][1]) else actions[i][1]()) if i != -1 else None)
 			#self.view.show_popup_menu([it[0] for it in actions], lambda i: actions[i][1]() if i != -1 else None)
 			if result == '':
 				return
