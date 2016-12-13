@@ -343,7 +343,7 @@ class f1_command(sublime_plugin.TextCommand):
 			for pair in ['‘’', '()', '{}', '[]']:
 				cnt = text.count(pair[0], line_start, line_end)
 				if cnt > 0 and cnt == text.count(pair[1], line_start, line_end):
-					for c in re.compile("[" + pair[0] + ("\\" if pair[1] == ']' else '') + pair[1] + "]").finditer(text, line_start, line_end):
+					for c in re.compile("[" + pair[0] + ("\\" if pair == '[]' else '') + pair[1] + "]").finditer(text, line_start, line_end):
 						erase_chars.append(c.start())
 		for pos in sorted(erase_chars, reverse = True):
 			self.view.erase(edit, sublime.Region(pos, pos+1))
@@ -589,16 +589,20 @@ class f1_command(sublime_plugin.TextCommand):
 									if ch == pair[0]:
 										nesting_level += 1
 									elif ch == pair[1]:
-										if pair[1] == ')': # это должна быть compile-time (а не run-time) проверка # \\\ I pair[1] == ‘)’
-											if text[i-1:i] == ':' and text[i+1:i+3] == '(:':                       # \\\    I text[(i-1, i+1..+2)] == ‘:(:’
+										if pair[0] == '(': # это должна быть compile-time (а не run-time) проверка # \\\ I pair[0] == ‘(’
+											assert(pair[1] == ')')                                                 # \\\    #assert(pair[1] == ‘)’)
+											if text[i-1:i] == ':' and text[i+1:i+3] == '(:':                       # \\\    I text[(i-1, i+1..+2)] == (‘:’, ‘(:’)
+												assert(text[i] == ')')                                             # \\\       #assert(text[i] == ‘)’)
 												i += 2 # пропускаем, чтобы смайлы :)(: не [ломали/]портили баланс
 												continue
 										nesting_level -= 1
 										if nesting_level == 0:
 											break
 							elif text[i] == pair[1]:
-								if pair[1] == ')': # это должна быть compile-time (а не run-time) проверка # \\\ I pair[1] == ‘)’
-									if text[i-1:i] == ':' and text[i+1:i+3] == '(:':                       # \\\    I text[(i-1, i+1..+2)] == ‘:(:’
+								if pair[0] == '(': # это должна быть compile-time (а не run-time) проверка # \\\ I pair[0] == ‘(’
+									assert(pair[1] == ')')                                                 # \\\    #assert(pair[1] == ‘)’)
+									if text[i-1:i] == ':' and text[i+1:i+3] == '(:':                       # \\\    I text[(i-1, i+1..+2)] == (‘:’, ‘(:’)
+										assert(text[i] == ')')                                             # \\\       #assert(text[i] == ‘)’)
 										i += 2 # пропускаем, чтобы смайлы :)(: не [ломали/]портили баланс
 										continue
 								raise IntException(i)
