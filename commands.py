@@ -607,6 +607,7 @@ class f1_command(sublime_plugin.TextCommand):
 				os.system("git difftool --no-prompt")
 				if sublime.ok_cancel_dialog(""):
 					os.system('git commit -a --allow-empty-message -m ""')
+					os.system('git push')
 
 			actions = [
 					('pqmarkup:to_html', pq_to_html),
