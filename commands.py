@@ -602,6 +602,12 @@ class f1_command(sublime_plugin.TextCommand):
 					self.view.sel().add(sublime.Region(i.i, i.i+1))
 					self.view.show_at_center(i.i)
 
+			def commit_current_file():
+				os.chdir(os.path.dirname(self.view.file_name()))
+				os.system("git difftool --no-prompt")
+				if sublime.ok_cancel_dialog(""):
+					os.system('git commit -a --allow-empty-message -m ""')
+
 			actions = [
 					('pqmarkup:to_html', pq_to_html),
 					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
@@ -621,6 +627,7 @@ class f1_command(sublime_plugin.TextCommand):
 					('Count total cost/expenses \ Подсчитать сумму расходов', count_total_expenses),
 					('Balance all paired spec symbols/characters ‘’(){}[]', balance_all_char_pairs),
 					('Remove all balanced pairs of spec symbols ‘’(){}[]', self.remove_all_balanced_chars_pairs),
+					('Commit\‘Отправить [коммит]’ current\текущий file\файл', commit_current_file)
 				]
 			# Условные\Conditional actions
 			clipbrd = sublime.get_clipboard()
@@ -1275,6 +1282,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 				#	if link[begq-1] == ' ':
 				#		link = link[:begq-1]#.rstrip(' ')
 				webbrowser.open(link)
+				return
 
 """
 		left = right = cursor_pos = self.view.sel()[0].begin()
