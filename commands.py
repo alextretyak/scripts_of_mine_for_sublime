@@ -1015,7 +1015,7 @@ class last_log_ctrl_shift_l(sublime_plugin.TextCommand):
 		current_task_line = calendarstr.count("\n") + tasks_str.count("\n")
 		for t in sorted(tasks_list, key=lambda t:t.priotity_level, reverse=True):
 			metadata[current_task_line] = Metadata(t)
-			current_task_line += 1
+			current_task_line += 1 + t.desc_string.count("\n")
 			tasks_str += t.desc_string + "[./" + t.fname + "]\n"
 
 		# Открываем новый буфер/окно с результатами поиска
