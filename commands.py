@@ -381,7 +381,7 @@ class f1_command(sublime_plugin.TextCommand):
 							self.view.replace(edit, sel_region, sel_str + ' ' + chr(int(sel_str, 16)))
 					return
 
-				result = (urllib.parse.unquote(selected_text) if selected_text.startswith('http') else
+				result = (urllib.parse.unquote(selected_text).replace(' ', '%20') if selected_text.startswith('http') else
 						  selected_text+' ' + datetime.datetime.fromtimestamp(int(selected_text)).strftime("%Y.%m.%d %H:%M:%S") if selected_text.isdigit() and 5<=len(selected_text)<=10 else
 	#					  selected_text+' ' + str(ord(selected_text)) + '=' + hex(ord(selected_text)) if len(selected_text) == 1 else
 	#					  selected_text+' ' + chr(int(selected_text, 16)) if 2 <= len(selected_text) <= 5 else
