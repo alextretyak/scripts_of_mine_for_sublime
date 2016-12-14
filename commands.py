@@ -621,6 +621,9 @@ class f1_command(sublime_plugin.TextCommand):
 					os.system('git commit -a --allow-empty-message -m "" & pause')
 					os.system('git push & pause')
 
+			def edit_selection_in_separate_buffer():
+				TODO
+
 			actions = [
 					('pqmarkup:to_html', pq_to_html),
 					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
@@ -640,7 +643,8 @@ class f1_command(sublime_plugin.TextCommand):
 					('Count total cost/expenses \ Подсчитать сумму расходов', count_total_expenses),
 					('Balance all paired spec symbols/characters ‘’(){}[]', balance_all_char_pairs),
 					('Remove all balanced pairs of spec symbols ‘’(){}[]', self.remove_all_balanced_chars_pairs),
-					('Commit\‘Отправить [коммит]’ current\текущий file\файл', commit_current_file)
+					('Commit\‘Отправить [коммит]’ current\текущий file\файл', commit_current_file),
+					('Edit selection in separate tab/buffer \ Редактировать/‘хочу работать’ с текущим выделением в отдельной вкладке', edit_selection_in_separate_buffer),
 				]
 			# Условные\Conditional actions
 			clipbrd = sublime.get_clipboard()
