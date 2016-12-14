@@ -549,7 +549,7 @@ class f1_command(sublime_plugin.TextCommand):
 						continue
 					сс = re.split('['+column_separator+']', line)
 					for c in range(len(сс)-2):
-						columns_w[c] = max(columns_w[c], len(сс[c+1].rstrip()))
+						columns_w[c] = max(columns_w[c], len(сс[c+1].rstrip()) + 1)
 				# Пишем красиво отформатированную таблицу
 				res = ''
 				for line in lines:
@@ -559,7 +559,7 @@ class f1_command(sublime_plugin.TextCommand):
 					else:
 						сс = re.split('['+column_separator+']', line)
 						for c in range(len(сс)-2):
-							res += ("{:"+str(columns_w[c])+"}").format(сс[c+1].rstrip()) + "."
+							res += ("{:"+str(columns_w[c])+"}").format(сс[c+1].rstrip() + " ") + "."
 					res += "\n"
 				replace_selection_with(res)
 
