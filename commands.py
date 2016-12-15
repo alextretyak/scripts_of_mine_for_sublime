@@ -13,7 +13,7 @@ class AddEndDateTimeCommand(sublime_plugin.TextCommand):
 def format_time(t):
 	return time.strftime("%Y.%m.%d %H:%M:%S", time.gmtime(t))
 
-def sassert(str1, str2): # string [smart] assert
+def sassert(str1, str2, hard = True): # string [smart] assert
 	import os, tempfile
 	if str1 != str2:
 		str1 = str(str1)
@@ -27,9 +27,12 @@ def sassert(str1, str2): # string [smart] assert
 			command += ' "' + full_fname + '"'
 			open(full_fname, "wt", encoding='utf-8-sig').write(file[1])
 		os.system(command)
-		assert(False)
+		if hard:
+			assert(False)
 def _sassert(str1, str2):
 	return 0
+def soft_assert(str1, str2):
+	return sassert(str1, str2, False)
 
 import tempfile, webbrowser
 def exec_command(cmd):
@@ -328,6 +331,15 @@ sassert(box_drawing("""
 │ │ └───────┘ │ │
 │ └───────────┘ │
 └───────────────┘
+""")
+soft_assert(box_drawing("""
+  ||
+  ... Wперёд
+  \..
+"""),"""
+  ││
+  │└─ Wперёд
+  └──
 """)
 
 class f1_command(sublime_plugin.TextCommand):
