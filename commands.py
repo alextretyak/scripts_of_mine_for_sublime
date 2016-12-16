@@ -33,6 +33,8 @@ def _sassert(str1, str2):
 	return 0
 def soft_assert(str1, str2):
 	return sassert(str1, str2, False)
+def hard_assert(str1, str2):
+	return sassert(str1, str2, True)
 
 import tempfile, webbrowser
 def exec_command(cmd):
@@ -103,7 +105,10 @@ class replace_selection_with_command(sublime_plugin.TextCommand):
 def replace_selection_with(characters):
 	view().run_command("replace_selection_with", { "characters": characters } )
 
-def box_drawing(text, box_drawing_chars = '─│─│ ┌┐┘└ ├┬┤┴ ┼'):
+box_drawing_chars_1 = '─│─│ ┌┐┘└ ├┬┤┴ ┼ └'
+box_drawing_chars_2 = '═║═║ ╔╗╝╚ ╠╦╣╩ ╬ └'
+box_drawing_chars_DEFAULT = box_drawing_chars_1
+def box_drawing(text, box_drawing_chars = box_drawing_chars_DEFAULT):
 	box_drawing_chars_iter = iter(box_drawing_chars.split(" "))
 	patterns_str = """
  x   xx ●●● xxx xxx ●●●  ● 
@@ -121,6 +126,10 @@ x●  x●x ●●x
 x●x
 ●┼●
 x●x
+
+|| 
+.└.
+\..
 """
 	patterns = [] # массив со всеми возможными [раскрытыми (повёрнутыми)] паттернами
 
@@ -397,8 +406,8 @@ class f1_command(sublime_plugin.TextCommand):
 						  selected_text+' ' + datetime.datetime.fromtimestamp(int(selected_text)).strftime("%Y.%m.%d %H:%M:%S") if selected_text.isdigit() and 5<=len(selected_text)<=10 else
 	#					  selected_text+' ' + str(ord(selected_text)) + '=' + hex(ord(selected_text)) if len(selected_text) == 1 else
 	#					  selected_text+' ' + chr(int(selected_text, 16)) if 2 <= len(selected_text) <= 5 else
-						  selected_text.replace('А','A').replace('В','B').replace('С','C').replace('Д','D').replace('Е','E').replace('Ф','F').replace(' ', '').replace("\n", '') if re.match(R"[0-9АВСДЕФ \n]+$", selected_text) else
-						  selected_text.replace('A','А').replace('B','В').replace('C','С').replace('D','Д').replace('E','Е').replace('F','Ф').replace(' ', '').replace("\n", '') if re.match(R"[0-9ABCDEF \n]+$", selected_text) else
+					#	  selected_text.replace('А','A').replace('В','B').replace('С','C').replace('Д','D').replace('Е','E').replace('Ф','F').replace(' ', '').replace("\n", '') if re.match(R"[0-9АВСДЕФ \n]+$", selected_text) else
+					#	  selected_text.replace('A','А').replace('B','В').replace('C','С').replace('D','Д').replace('E','Е').replace('F','Ф').replace(' ', '').replace("\n", '') if re.match(R"[0-9ABCDEF \n]+$", selected_text) else
 						  '')#(#selected_text+' ' + '?ЧТО ДЕЛАТЬ?')
 			except:
 				#result = selected_text + ' !EXCEPTION!'
@@ -446,11 +455,11 @@ class f1_command(sublime_plugin.TextCommand):
 						return
 				#(‘’)’'
 
-				#Этот код показывает разницу (количество секунд) между двумя выделенными датами
+				#Этот код показывает разницу (количество секунд и минут[- и часов-]) между двумя выделенными датами
 				if len(self.view.sel()) == 2 and parse_date_time(self.view.substr(self.view.sel()[0])) and parse_date_time(self.view.substr(self.view.sel()[1])):
-					view().show_popup(str(
-					  parse_date_time(self.view.substr(self.view.sel()[1]))
-					- parse_date_time(self.view.substr(self.view.sel()[0]))))
+					s=(parse_date_time(self.view.substr(self.view.sel()[1]))
+					 - parse_date_time(self.view.substr(self.view.sel()[0])))
+					view().show_popup(str(s)+"сек<br>"+str(s//60)+"мин "+str(s%60)+"сек") # \\ s‘сек’
 					return
 
 				# Если курсор/выделение находится внутри [-невыполненной-] задачи, то помечаем её как [+выполненную+]
@@ -561,7 +570,7 @@ class f1_command(sublime_plugin.TextCommand):
 						continue
 					сс = re.split('['+column_separator+']', line)
 					for c in range(len(сс)-2):
-						columns_w[c] = max(columns_w[c], len(сс[c+1].rstrip()) + 1)
+						columns_w[c] = max(columns_w[c], 1 + len(сс[c+1].strip()) + 1)
 				# Пишем красиво отформатированную таблицу
 				res = ''
 				for line in lines:
@@ -571,7 +580,7 @@ class f1_command(sublime_plugin.TextCommand):
 					else:
 						сс = re.split('['+column_separator+']', line)
 						for c in range(len(сс)-2):
-							res += ("{:"+str(columns_w[c])+"}").format(сс[c+1].rstrip() + " ") + "."
+							res += ("{:"+str(columns_w[c])+"}").format(" " + сс[c+1].strip() + " ") + "."
 					res += "\n"
 				replace_selection_with(res)
 
@@ -642,8 +651,8 @@ class f1_command(sublime_plugin.TextCommand):
 					('pqmarkup:remove_[[[comments]]]_and_copy_to_clipboard', pq_remove_comments_and_copy_to_clipboard),
 					('Prev versions', prev_versions),
 					('Файлы этого дня', folder_of_that_day),
-					('─│─│ ┌┐┘└ ├┬┤┴ ┼', lambda: box_drawing_chars('─│─│ ┌┐┘└ ├┬┤┴ ┼')),
-					('═║═║ ╔╗╝╚ ╠╦╣╩ ╬', lambda: box_drawing_chars('═║═║ ╔╗╝╚ ╠╦╣╩ ╬')),
+					(box_drawing_chars_1, lambda: box_drawing_chars(box_drawing_chars_1)),
+					(box_drawing_chars_2, lambda: box_drawing_chars(box_drawing_chars_2)),
 					('Найти символ не представимый в кодировке cp1251', find_first_non1251_char),
 					('Оставить выделенными все глухие согласные буквы',  lambda: remain_in_selection_this_characters("СТПКХЧШЩЦФ")),
 					('Оставить выделенными все звонкие согласные буквы', lambda: remain_in_selection_this_characters("МНГЛВРЗБЙЖД")),
