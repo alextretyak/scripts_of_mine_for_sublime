@@ -644,7 +644,7 @@ class f1_command(sublime_plugin.TextCommand):
 					os.system('git push & pause')
 
 			def edit_selection_in_separate_buffer():
-				TODO
+				pass#[--]
 
 			actions = [
 					('pqmarkup:to_html', pq_to_html),
