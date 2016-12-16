@@ -415,7 +415,7 @@ class f1_command(sublime_plugin.TextCommand):
 				return
 
 			if result == '':
-				m = re.match(r"(?:(?:БЕ|РА)\.\d\d?\.)?(\d\d?):(\d\d?):(\d\d) ", selected_text)
+				m = re.match(r"(?:(?:БЕ|РА|НЕ)\.\d\d?\.)?(\d\d?):(\d\d?):(\d\d) ", selected_text)
 				if m:
 					t = parse_date_time(selected_text[m.end():])
 					if t:
