@@ -353,6 +353,12 @@ sassert(box_drawing("""
 #   └──
 # """)
 
+class OnPreCloseListener(sublime_plugin.EventListener):
+	def on_pre_close(self, view):
+		global temp_edit_view
+		if view == temp_edit_view:
+			temp_edit_view_prev_view.run_command("replace_selection_with", { "characters": view.substr(sublime.Region(0, view.size())) } )
+
 class f1_command(sublime_plugin.TextCommand):
 	def remove_all_balanced_chars_pairs(self, edit):
 		text = self.view.substr(sublime.Region(0, self.view.size()))
@@ -371,9 +377,18 @@ class f1_command(sublime_plugin.TextCommand):
 		for pos in sorted(erase_chars, reverse = True):
 			self.view.erase(edit, sublime.Region(pos, pos+1))
 
+	def edit_selection_in_separate_buffer(self, edit):
+		global temp_edit_view, temp_edit_view_sel, temp_edit_view_prev_view
+		temp_edit_view = sublime.active_window().new_file()
+		temp_edit_view.set_scratch(True)
+		temp_edit_view.insert(edit, 0, self.view.substr(self.view.sel()[0]))
+		temp_edit_view.set_name(" ")
+		temp_edit_view_prev_view = self.view
+
 	def run(self, edit, shift_key_pressed = False, redirect_method = None):
 		if redirect_method != None:
 			getattr(self, redirect_method)(edit)
+			return
 
 		selected_text = self.view.substr(self.view.sel()[0])
 		result = ''
@@ -645,9 +660,6 @@ class f1_command(sublime_plugin.TextCommand):
 					os.system('git commit -a --allow-empty-message -m "" & pause')
 					os.system('git push & pause')
 
-			def edit_selection_in_separate_buffer():
-				pass#[--]
-
 			actions = [
 					('pqmarkup:to_html', pq_to_html),
 					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
@@ -668,7 +680,7 @@ class f1_command(sublime_plugin.TextCommand):
 					('Balance all paired spec symbols/characters ‘’(){}[]', balance_all_char_pairs),
 					('Remove all balanced pairs of spec symbols ‘’(){}[]', self.remove_all_balanced_chars_pairs),
 					('Commit\‘Отправить [коммит]’ current\текущий file\файл', commit_current_file),
-					('Edit selection in separate tab/buffer \ Редактировать/‘хочу работать’ с текущим выделением в отдельной вкладке', edit_selection_in_separate_buffer),
+					('Edit selection in separate tab/buffer \ Редактировать/‘хочу работать’ с текущим выделением в отдельной вкладке', self.edit_selection_in_separate_buffer),
 				]
 			# Условные\Conditional actions
 			clipbrd = sublime.get_clipboard()
