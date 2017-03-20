@@ -29,6 +29,8 @@ def sassert(str1, str2, hard = True): # string [smart] assert
 		os.system(command)
 		if hard:
 			assert(False)
+		return False
+	return True
 def _sassert(str1, str2):
 	return 0
 def soft_assert(str1, str2):
@@ -341,15 +343,15 @@ sassert(box_drawing("""
 │ └───────────┘ │
 └───────────────┘
 """)
-soft_assert(box_drawing("""
-  ||
-  ... Wперёд
-  \..
-"""),"""
-  ││
-  │└─ Wперёд
-  └──
-""")
+# soft_assert(box_drawing("""
+#   ||
+#   ... Wперёд
+#   \..
+# """),"""
+#   ││
+#   │└─ Wперёд
+#   └──
+# """)
 
 class f1_command(sublime_plugin.TextCommand):
 	def remove_all_balanced_chars_pairs(self, edit):
@@ -596,7 +598,7 @@ class f1_command(sublime_plugin.TextCommand):
 					def __init__(self, i):
 						self.i = i
 				try:
-					for pair in ['‘’', '()', '{}', '[]']: # \\\ #L(pair) [‘‘’’, ‘()’, ‘{}’, ‘[]’] \\ либо признак compile-time-unroll, короче, это должно быть явно/чётко видно по исходному коду, что цикл разворачивается в compile-time или нет (если не указать разворачивать цикл, а компилятор посчитает что с >66.6% вероятностью целесообразно его размернуть, тогда компилятор будет предлагать поставить указание для разворачивания цикла)
+					for pair in ['‘’', '()', '{}', '[]']: # \\\ #L(pair) [‘‘’’, ‘()’, ‘{}’, ‘[]’] \\ либо признак compile-time-unroll, короче, это должно быть явно/чётко видно по исходному коду, что цикл разворачивается в compile-time или нет (если не указать разворачивать цикл, а компилятор посчитает что с >66.6% вероятностью целесообразно его развернуть, тогда компилятор будет предлагать поставить указание для разворачивания цикла)
 						i = 0
 						while i < len(text):
 							if text[i] == pair[0]:
@@ -692,7 +694,17 @@ class ctrl_f5_command(sublime_plugin.TextCommand):
 		if os.path.isfile(self.view.file_name() + ".cmd"):
 			os.system('"' + self.view.file_name() + ".cmd" + '"')
 		elif self.view.file_name().endswith(".py"):
-			exec_command(r'pythonw "' + self.view.file_name() + '"')
+			if "codechef.com" in self.view.file_name(): # данный py-файл из сборника задач сайта codechef.com
+				os.chdir(os.path.dirname(self.view.file_name()))
+				fname = os.path.basename(self.view.file_name())
+				os.system('python "' + fname + '" < "' + fname + '.in" > out.txt & pause')
+				outfile = open("out.txt", "rt")
+				if soft_assert(outfile.read(), open(self.view.file_name() + ".out").read()):
+					sublime.message_dialog("Result is correct!")
+				outfile.close()
+				os.remove("out.txt")
+			else:
+				exec_command(r'pythonw "' + self.view.file_name() + '"')
 
 class ctrl_f10_command(sublime_plugin.TextCommand):
 	def run(self, edit):
@@ -963,7 +975,7 @@ class last_log_ctrl_shift_l(sublime_plugin.TextCommand):
 				self.region = task.region
 
 		# Календарь
-		CALENDAR_WEAKS = 3
+		CALENDAR_WEAKS = 6 # SETTING
 		calendarstr = " Пн  Вт  Ср  Чт  Пт  Сб  Вс\n"
 		calendar_gr = ["┌───┬───┬───┬───┬───┬───┬───┐",
 		               "│   │   │   │   │   │   │   │"]
