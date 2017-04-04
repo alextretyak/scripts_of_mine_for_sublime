@@ -499,6 +499,16 @@ class f1_command(sublime_plugin.TextCommand):
 						self.view.replace(edit, sublime.Region(sq_brackets.b-1, sq_brackets.b), '+')
 						return
 
+			def pq_to_habrahabr_html():
+				pq_text = selected_text
+				if pq_text == "":
+					pq_text = view().substr(sublime.Region(0, view().size()))
+
+				fname = os.getenv('TEMP') + r'\pq_to_html'
+				with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
+					f.write(pq_text)
+				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --habrahabr-html --infile "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
+					sublime.set_clipboard(open(fname + '.html', encoding = 'utf-8').read())
 			def pq_to_html():
 				pq_text = selected_text
 				if pq_text == "": # находим всю запись в том месте, где стоит курсор
@@ -508,7 +518,7 @@ class f1_command(sublime_plugin.TextCommand):
 				with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
 					f.write(pq_text)
 			#	if exec_command(r'pythonw C:\!GIT-HUB\adamaveli.name\tools\pq.txt2html.py "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
-				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document --habrahabr-html --infile "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
+				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document --infile "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
 					webbrowser.open(fname + '.html')
 			def pq_remove_comments_and_copy_to_clipboard():
 				#sublime.set_clipboard(re.sub(R'\[\[\[(.*?)]]]', '', selected_text))
@@ -663,6 +673,7 @@ class f1_command(sublime_plugin.TextCommand):
 					os.system('git push & pause')
 
 			actions = [
+					('pqmarkup:to_habrahabr_html', pq_to_habrahabr_html),
 					('pqmarkup:to_html', pq_to_html),
 					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
 					('pqmarkup:remove_[[[comments]]]_and_copy_to_clipboard', pq_remove_comments_and_copy_to_clipboard),
@@ -777,7 +788,7 @@ class pq_format_char(sublime_plugin.TextCommand):
 		selected_text = self.view.substr(self.view.sel()[0])
 	   #self.view.run_command("insert_snippet", { "contents": char if selected_text == '' else "${0:"+char+"‘$SELECTION’}" } )
 		if selected_text == '':
-			self.view.run_command("insert_snippet", { "contents": char })
+			self.view.run_command("insert_snippet", {"contents": char})
 		else:
 			self.view.run_command("insert_pq", {"prefix": char})
 
