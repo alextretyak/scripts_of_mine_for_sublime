@@ -491,7 +491,7 @@ class f1_command(sublime_plugin.TextCommand):
 					sq_brackets.a += 1
 					sq_brackets.b -= 1
 					sq_str = self.view.substr(sq_brackets)
-					if sq_str[0:1] == '-' and sq_str[-1] == '-':
+					if len(sq_str) > 1 and sq_str[0] == '-' and sq_str[-1] == '-':
 						self.view.sel().clear()
 					#	self.view.sel().add(sublime.Region(sq_brackets.a, sq_brackets.a+1))
 						self.view.sel().add(sublime.Region(sq_brackets.b-1, sq_brackets.b))
