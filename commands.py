@@ -507,7 +507,7 @@ class f1_command(sublime_plugin.TextCommand):
 				fname = os.getenv('TEMP') + r'\pq_to_html'
 				with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
 					f.write(pq_text)
-				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --habrahabr-html --infile "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
+				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup --habrahabr-html "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
 					sublime.set_clipboard(open(fname + '.html', encoding = 'utf-8').read())
 			def pq_to_html():
 				pq_text = selected_text
@@ -518,7 +518,7 @@ class f1_command(sublime_plugin.TextCommand):
 				with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
 					f.write(pq_text)
 			#	if exec_command(r'pythonw C:\!GIT-HUB\adamaveli.name\tools\pq.txt2html.py "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
-				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document --infile "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
+				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup --output-html-document "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
 					webbrowser.open(fname + '.html')
 			def pq_remove_comments_and_copy_to_clipboard():
 				#sublime.set_clipboard(re.sub(R'\[\[\[(.*?)]]]', '', selected_text))
@@ -716,11 +716,10 @@ class f1_command(sublime_plugin.TextCommand):
 class ctrl_f5_command(sublime_plugin.TextCommand):
 	def run(self, edit):
 		self.view.run_command("save")
+		cwd = os.getcwd()
+		os.chdir(os.path.dirname(self.view.file_name()))
 		if os.path.isfile(self.view.file_name() + ".cmd"):
-			cwd = os.getcwd()
-			os.chdir(os.path.dirname(self.view.file_name()))
 			os.system('"' + self.view.file_name() + ".cmd" + '"')
-			os.chdir(cwd)
 		elif self.view.file_name().endswith(".py"):
 			if "codechef.com" in self.view.file_name(): # данный py-файл из сборника задач сайта codechef.com
 				os.chdir(os.path.dirname(self.view.file_name()))
@@ -733,6 +732,7 @@ class ctrl_f5_command(sublime_plugin.TextCommand):
 				os.remove("out.txt")
 			else:
 				exec_command(r'pythonw "' + self.view.file_name() + '"')
+		os.chdir(cwd)
 
 class ctrl_f10_command(sublime_plugin.TextCommand):
 	def run(self, edit):
@@ -1440,14 +1440,14 @@ class punto_switcher_emulator_command(sublime_plugin.TextCommand):
 	   #	i = OT.find(c)
 	   #	newtext += TO[i] if i != -1 else c
 	   #/\ — эта версия разрушает ("вyfxfkt" после двойного нажатия Shift+Pause/Break не возвращается само в себя)
-		OT = ("""qwertyuiop[]asdfghjkl;'\zxcvbnm,./№"""
+		OT = ("""qwertyuiop[]asdfghjkl;'\zxcvbnm,./№`"""
 		      """QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?@#$%^&"""
 		      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,"№;%:?"""
-		      """йцукенгшщзхъфывапролджэ\ячсмитьбю.#""")
-		TO = ("""йцукенгшщзхъфывапролджэ\ячсмитьбю.#"""
+		      """йцукенгшщзхъфывапролджэ\ячсмитьбю.#ё""")
+		TO = ("""йцукенгшщзхъфывапролджэ\ячсмитьбю.#ё"""
 		      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,"№;%:?"""
 		      """QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?@#$%^&"""
-		      """qwertyuiop[]asdfghjkl;'\zxcvbnm,./№""")
+		      """qwertyuiop[]asdfghjkl;'\zxcvbnm,./№`""")
 		newtext = ""
 		for c in selected_text:
 			i = OT.find(c)
