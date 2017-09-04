@@ -507,7 +507,7 @@ class f1_command(sublime_plugin.TextCommand):
 				fname = os.getenv('TEMP') + r'\pq_to_html'
 				with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
 					f.write(pq_text)
-				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup --habrahabr-html "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
+				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --habrahabr-html "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
 					sublime.set_clipboard(open(fname + '.html', encoding = 'utf-8').read())
 			def pq_to_html():
 				pq_text = selected_text
@@ -518,7 +518,7 @@ class f1_command(sublime_plugin.TextCommand):
 				with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
 					f.write(pq_text)
 			#	if exec_command(r'pythonw C:\!GIT-HUB\adamaveli.name\tools\pq.txt2html.py "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
-				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup --output-html-document "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
+				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
 					webbrowser.open(fname + '.html')
 			def pq_remove_comments_and_copy_to_clipboard():
 				#sublime.set_clipboard(re.sub(R'\[\[\[(.*?)]]]', '', selected_text))
