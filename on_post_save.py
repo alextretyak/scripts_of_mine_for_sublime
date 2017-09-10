@@ -1,9 +1,14 @@
-import sublime_plugin, os, subprocess, re, sublime, sys
+import sublime_plugin, os, subprocess, re, sublime, sys, commands
 
 class Update(sublime_plugin.EventListener):
 	def on_post_save(self, view):
+		if "ifilter.github.io" in view.file_name():
+			os.chdir(os.path.dirname(view.file_name()))
+			#os.system('git commit -a --allow-empty-message -m ""', nowindow=True)
+			print("saved" if subprocess.call('git commit -a --allow-empty-message -m ""', shell=True) == 0 else "NOT SAVED")
+
 		sys.path.append(os.path.dirname(__file__))
-		import commands
+		# import commands (вообще импорта быть не должно, так как я на это отвлекаюсь)
 		if view.file_name().endswith('.py'):
 			pqi = view.file_name().find("pqmarkup")
 			if pqi != -1:
