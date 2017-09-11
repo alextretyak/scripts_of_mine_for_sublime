@@ -1,4 +1,4 @@
-import sublime_plugin, os, subprocess, re, sublime, sys, commands
+import sublime_plugin, os, subprocess, re, sublime, sys#, commands \\ Traceback (most recent call last): ... line 1, in <module> ... ImportError: No module named 'commands'
 
 class Update(sublime_plugin.EventListener):
 	def on_post_save(self, view):
@@ -6,9 +6,10 @@ class Update(sublime_plugin.EventListener):
 			os.chdir(os.path.dirname(view.file_name()))
 			#os.system('git commit -a --allow-empty-message -m ""', nowindow=True)
 			print("saved" if subprocess.call('git commit -a --allow-empty-message -m ""', shell=True) == 0 else "NOT SAVED")
+			return
 
 		sys.path.append(os.path.dirname(__file__))
-		# import commands (вообще импорта быть не должно, так как я на это отвлекаюсь)
+		import commands #(вообще импорта быть не должно, так как я на это отвлекаюсь)
 		if view.file_name().endswith('.py'):
 			pqi = view.file_name().find("pqmarkup")
 			if pqi != -1:
