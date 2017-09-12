@@ -439,6 +439,11 @@ class f1_command(sublime_plugin.TextCommand):
 					if t:
 						start = t - (int(m.group(1))*3600 + int(m.group(2))*60 + int(m.group(3)))
 						result = selected_text + "\n" + format_time(start) + "\n" + format_time(start + 21839)
+				if regexp.match(str):
+					### if str[-1] == "\n": # почему-то re.match("word$","word\n") возвращает match, поэтому исключаем явно такую ситуацию
+					### 	return
+					return calendar.timegm(time.strptime(str, '%Y.%m.%d %H:%M:%S'))
+				m = 
 
 		if result == '':
 
