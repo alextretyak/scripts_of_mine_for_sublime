@@ -673,6 +673,7 @@ class f1_command(sublime_plugin.TextCommand):
 					os.system('git push & pause')
 
 			actions = [
+					#('Редактировать секретное сообщение', edit_secret_message),
 					('pqmarkup:to_habrahabr_html', pq_to_habrahabr_html),
 					('pqmarkup:to_html', pq_to_html),
 					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
@@ -854,16 +855,6 @@ for format in ['%Y.%m.%d, %H:%M:%S',   # 2016.05.22, 10:22:47 — My previous st
 										                          	          .replace('%p', '[AP]M'))
 	                                                                                                    + '$')))
 
-def dropbox_dir():
-	# Идём по списку открытых файлов, чтобы найти каталог Dropbox
-	for v in sublime.active_window().views():
-		if v.file_name():
-			i = v.file_name().find("Dropbox\\") # \\ A i = v.file_name()?.find("Dropbox\\") ?? -1
-			if i != -1:
-				return v.file_name()[:i+8]
-			if v.file_name().startswith("B:\\"):
-				return "B:\\"
-
 def precheck_date_time(s, pos, end): # функция предварительной проверки для ускорения расчётов
 	if pos + 1 >= end:#len(s):
 		return False
@@ -889,6 +880,16 @@ def parse_date_time(str, precheck_already_made = False):
 			if str[-1] == "\n": # почему-то re.match("word$","word\n") возвращает match, поэтому исключаем явно такую ситуацию
 				return
 			return calendar.timegm(time.strptime(str, format))
+
+def dropbox_dir():
+	# Идём по списку открытых файлов, чтобы найти каталог Dropbox
+	for v in sublime.active_window().views():
+		if v.file_name():
+			i = v.file_name().find("Dropbox\\") # \\ A i = v.file_name()?.find("Dropbox\\") ?? -1
+			if i != -1:
+				return v.file_name()[:i+8]
+			if v.file_name().startswith("B:\\"):
+				return "B:\\"
 
 def find_ending_sq_bracket(str, i):
 	assert(str[i] == "[") # ]
@@ -960,10 +961,11 @@ class last_log_ctrl_shift_l(sublime_plugin.TextCommand):
 						continue
 					lvs = found.group(1)
 					lv = len(lvs)
-					if lv != 0 and lvs[0] != "!":
+					if lv != 0 and lvs[0] != "!": # [-для чего это я делал?-]
 						assert(lvs[0] == "?")
 						lv = -lv
-					tasks_list.append(TaskInfo(lv, content[found.start(0):end_sqb_pos+1], self.i + 1 + found.start(0), self.i + 1 + end_sqb_pos+1, self.fcontents, self.fname, self.date_time))
+					if lvs.startswith("!") or (content[found.start(0)+2:found.start(0)+4].isdigit()): # O‘ОТОБРАЖАТЬ ТОЛЬКО ВАЖНЫЕ[‘с символом ! вначале’] ЗАДАЧИ’ [[[О‘’ — ОПЦИЯ\OPTION]]]
+						tasks_list.append(TaskInfo(lv, content[found.start(0):end_sqb_pos+1], self.i + 1 + found.start(0), self.i + 1 + end_sqb_pos+1, self.fcontents, self.fname, self.date_time))
 				return logr, tasks_list
 
 		# Обходим все однобуквенные файлы в каталоге Dropbox
@@ -1095,11 +1097,19 @@ class last_log_ctrl_shift_l(sublime_plugin.TextCommand):
 			metadata[current_task_line] = Metadata(t)
 			current_task_line += 1 + t.desc_string.count("\n")
 			tasks_str += t.desc_string + "[./" + t.fname + "]\n"
+		if not tasks_list:
+			tasks_str += "[пусто]\n"
 
 		# Открываем новый буфер/окно с результатами поиска
 		newfile = sublime.active_window().new_file()
 		newfile.set_scratch(True)
-		newfile.insert(edit, 0, calendarstr + tasks_str + "\n\nПОСЛЕДНИЕ ЗАПИСИ:\n\n" + log)
+		newfile.insert(edit, 0, calendarstr + tasks_str
+			+ "\n\nПОСЛЕДНИЕ ЗАПИСИ:\n\n" + (
+			"[скрыто {O‘ПОКАЗЫВАТЬ ПОСЛЕДНИЕ ЗАПИСИ’}]" if
+			0
+			+ 1 # O‘ПОКАЗЫВАТЬ\скрыть ПОСЛЕДНИЕ ЗАПИСИ’ [[[тег О[пция] работает таким образом, что строка с этим тегом комментируется при отключении опции, но если строка закомментирована, то опция отключена по умолчанию, то есть умолчания всегда хардкодятся]]]
+			else log)
+			)
 		newfile.set_read_only(True)
 		newfile.set_name("ДЕЛА") # ЗАДАЧИ ГРАФИК РАСПИСАНИЕ MYL TASKS_LIST SCHEDULE
 
