@@ -825,7 +825,7 @@ class sha3_ctrl_shift_i(sublime_plugin.TextCommand):
 
 		new_text = selected_text
 		dict = {}
-		for en in ['utf-8', 'UTF', 'cyrillic', 'maccyrillic', 'cyrillic-asian', 'koi8_u', 'IBM855', 'IBM866', 'windows-1251', 'koi8_r', 'utf8']: # TODO: ADD 'ruscii[=ibm1125|cp866u]'
+		for en in ['utf-8']:#, 'UTF', 'cyrillic', 'maccyrillic', 'cyrillic-asian', 'koi8_u', 'IBM855', 'IBM866', 'windows-1251', 'koi8_r', 'utf8']: # TODO: ADD 'ruscii[=ibm1125|cp866u]'
 			text_as_binary = selected_text.encode(en, errors = 'ignore')
 			hash =(as_hex_str(CompactFIPS202.SHA3_512(text_as_binary)) +
 			'\n' + as_hex_str(CompactFIPS202.Keccak(576, 1024, text_as_binary, 0x01, 512//8)))
