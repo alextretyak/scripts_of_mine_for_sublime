@@ -830,6 +830,8 @@ class sha3_ctrl_shift_i(sublime_plugin.TextCommand):
 			text_as_binary = selected_text.encode(en, errors = 'ignore')
 			hash =(as_hex_str(CompactFIPS202.SHA3_512(text_as_binary)) +
 			'\n' + as_hex_str(CompactFIPS202.Keccak(576, 1024, text_as_binary, 0x01, 512//8)))
+			if len(selected_text) < len(hash):
+				hash = hash[:len(selected_text)]
 			if hash not in dict:
 				dict[hash] = []
 			dict[hash].append(en)
