@@ -619,7 +619,7 @@ class f1_command(sublime_plugin.TextCommand):
 				self.view.find_all("(\d+)Р", 0, R"\1", extractions)
 				self.view.show_popup(str(sum([int(e) for e in extractions])))
 
-			def balance_all_char_pairs():
+			def balance_all_char_pairs(): # [-[[[FIX TO ]]]CORRECT https://s.mail.ru/Hyii/M6iAbpmM4-]
 				text = self.view.substr(sublime.Region(0, self.view.size()))
 				class IntException(BaseException):
 					def __init__(self, i):
