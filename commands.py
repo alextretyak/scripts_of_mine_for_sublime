@@ -1226,7 +1226,7 @@ def find_matching_cu_brackets(region):
 def find_matching_sq_brackets(region):
 	return find_matching_brackets(region, '[', ']')
 
-def find_matching_brackets(region, Lbr, rbR, how_far = 1000):
+def find_matching_brackets(region, Lbr, rbR, how_far = 2000):
 	left, right = region.begin(), region.end()
 	if left == right: # фикс для первого вызова (это условие выполняется только при пустом выделении = при первом вызове), чтобы можно было установить курсор перед `[` или после `]`
 		if view().substr(left) == Lbr:
@@ -1304,7 +1304,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 			metadat = metadata.get(self.view.rowcol(sel)[0], None)
 			if metadat:
 				open_dropbox_file_and_go_to_text(metadat.fname, metadat.str, metadat.region)
-			return
+				return # должно быть именно на этом уровне! иначе не работают ссылки в сообщениях в блоке ‘ПОСЛЕДНИЕ ЗАПИСИ:’ в файле ДЕЛА
 
 		#-(1476746702±?)'‘def find_matching_sq_brackets(region):...’'
 
