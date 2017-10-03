@@ -750,26 +750,7 @@ class shift_ctrl_f11_command(sublime_plugin.TextCommand):
 		selected_text = self.view.substr(self.view.sel()[0])
 		self.view.run_command("insert_snippet", { "contents": selected_text.replace('_', '') } )
 
-def balance_pq_string(s): # [[[‘]]]на вход подаётся строка без кавычек, например: "Don’t", а на выходе строка уже в кавычках, так как... снаружи их так просто уже не добавишь
-	min_nesting_level = 0
-	nesting_level = 0
-	i = 0
-	while i < len(s):
-		ch = s[i]
-		if ch == "‘":
-			nesting_level += 1
-		elif ch == "’":
-			nesting_level -= 1
-			min_nesting_level = min(min_nesting_level, nesting_level)
-		i += 1
-	nesting_level -= min_nesting_level
-	return "'"*-min_nesting_level + "‘"*-min_nesting_level + "‘" + s + "’" + "’"*nesting_level + "'"*nesting_level
-
-sassert(balance_pq_string("Don‘t! Don‘t! Don‘t!"), "‘Don‘t! Don‘t! Don‘t!’’’’'''")
-sassert(balance_pq_string("’‘"), "'‘‘’‘’’'")
-sassert(balance_pq_string("Don’t! Don’t! Don’t!"), "'''‘‘‘‘Don’t! Don’t! Don’t!’")
-
-class insert_pq(sublime_plugin.TextCommand):
+class insert_pq_(sublime_plugin.TextCommand):
 	def run(self, edit, prefix = '', postfix = ''):
 	  # selected_text = self.view.substr(self.view.sel()[0])
 	   #self.view.run_command("insert_snippet", { "contents": "‘${0:$SELECTION}’" if selected_text == '' else "${0:‘$SELECTION’}" } )
@@ -783,15 +764,6 @@ class insert_pq(sublime_plugin.TextCommand):
 		##### почему-то так не работает :(): поэтому пришлось сделать по-другому: (:так даже понятнее получилось:)
 			self.view.sel().subtract(rgn) ; self.view.sel().add(sublime.Region(rgn.a+1+len(prefix), rgn.b-1-len(postfix))) # странно, что это вообще работает (::) потому что вот так вот:
 		   #with (self.view.sel()): subtract(rgn) ; add(sublime.Region(rgn.a+1, rgn.b-1)) не работает
-
-class pq_format_char(sublime_plugin.TextCommand):
-	def run(self, edit, char):
-		selected_text = self.view.substr(self.view.sel()[0])
-	   #self.view.run_command("insert_snippet", { "contents": char if selected_text == '' else "${0:"+char+"‘$SELECTION’}" } )
-		if selected_text == '':
-			self.view.run_command("insert_snippet", {"contents": char})
-		else:
-			self.view.run_command("insert_pq", {"prefix": char})
 
 class pq_format_delta(sublime_plugin.TextCommand):
 	def run(self, edit, char):
@@ -830,8 +802,8 @@ class sha3_ctrl_shift_i(sublime_plugin.TextCommand):
 			text_as_binary = selected_text.encode(en, errors = 'ignore')
 			hash =(as_hex_str(CompactFIPS202.SHA3_512(text_as_binary)) +
 			'\n' + as_hex_str(CompactFIPS202.Keccak(576, 1024, text_as_binary, 0x01, 512//8)))
-			if len(selected_text) < len(hash):
-				hash = hash[:len(selected_text)]
+		#	if len(selected_text) < len(hash):
+		#		hash = hash[:len(selected_text)]
 			if hash not in dict:
 				dict[hash] = []
 			dict[hash].append(en)
@@ -1109,7 +1081,7 @@ class last_log_ctrl_shift_l(sublime_plugin.TextCommand):
 			+ "\n\nПОСЛЕДНИЕ ЗАПИСИ:\n\n" + (
 			"[скрыто {O‘ПОКАЗЫВАТЬ ПОСЛЕДНИЕ ЗАПИСИ’}]" if
 			0
-			+ 1 # O‘ПОКАЗЫВАТЬ\скрыть ПОСЛЕДНИЕ ЗАПИСИ’ [[[тег О[пция] работает таким образом, что строка с этим тегом комментируется при отключении опции, но если строка закомментирована, то опция отключена по умолчанию, то есть умолчания всегда хардкодятся]]]
+			#+ 1 # O‘ПОКАЗЫВАТЬ\скрыть ПОСЛЕДНИЕ ЗАПИСИ’ [[[тег О[пция] работает таким образом, что строка с этим тегом комментируется при отключении опции, но если строка закомментирована, то опция отключена по умолчанию, то есть умолчания всегда хардкодятся]]]
 			else log)
 			)
 		newfile.set_read_only(True)
@@ -1226,7 +1198,14 @@ class LoadListener(sublime_plugin.EventListener): # https://forum.sublimetext.co
 		if target_region:
 			r = target_region
 		elif target_text != "":
-			r = view.find(target_text, 0, sublime.LITERAL)
+			r = sublime.Region(-1)
+			while True:
+				r = view.find(target_text, r.a+1, sublime.LITERAL)
+				if r == sublime.Region(-1):
+					break
+				if view.substr(sublime.Region(r.a-2, r.a)) == ":‘": # ’
+					continue # пропускаем все ссылки на файлы (:так проще:), иначе не будут работать ссылки внутри файла (например: `[./этот_файл:‘текст’] ... текст` нажатие по ссылке выделит первый `текст`, а должно выделить второй)
+				break
 		else:
 			return
 		#r = sublime.Region(r.begin()) # если не хочется выделять весь текст задачи, тогда можно просто раскомментировать эту строку
@@ -1325,7 +1304,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 			metadat = metadata.get(self.view.rowcol(sel)[0], None)
 			if metadat:
 				open_dropbox_file_and_go_to_text(metadat.fname, metadat.str, metadat.region)
-				return
+			return
 
 		#-(1476746702±?)'‘def find_matching_sq_brackets(region):...’'
 
