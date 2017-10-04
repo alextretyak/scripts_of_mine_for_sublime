@@ -1274,7 +1274,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 	def run(self, edit):
 		def open_dropbox_file_and_go_to_text(file_name, text, region = None):
 			global target_view, target_text, target_region
-			target_view = sublime.active_window().open_file(dropbox_dir() +"/"+ file_name)
+			target_view = sublime.active_window().open_file(dropbox_dir()*0 + os.path.dirname(self.view.file_name()) +"/"+ file_name)
 			target_text = text
 			target_region = region
 			if not target_view.is_loading():
@@ -1304,7 +1304,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 			metadat = metadata.get(self.view.rowcol(sel)[0], None)
 			if metadat:
 				open_dropbox_file_and_go_to_text(metadat.fname, metadat.str, metadat.region)
-				return # должно быть именно на этом уровне! иначе не работают ссылки в сообщениях в блоке ‘ПОСЛЕДНИЕ ЗАПИСИ:’ в файле ДЕЛА
+				return # должно быть именно на этом уровне отступа! иначе не работают ссылки в сообщениях в блоке ‘ПОСЛЕДНИЕ ЗАПИСИ:’ в файле ДЕЛА
 
 		#-(1476746702±?)'‘def find_matching_sq_brackets(region):...’'
 
