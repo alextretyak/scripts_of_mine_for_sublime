@@ -363,18 +363,27 @@ class OnPreCloseListener(sublime_plugin.EventListener):
 class f1_command(sublime_plugin.TextCommand):
 	def remove_all_balanced_chars_pairs(self, edit):
 		text = self.view.substr(sublime.Region(0, self.view.size()))
-		line_end = -1
+		# line_end = -1
 		erase_chars = []
-		while line_end < len(text):
-			line_start = line_end + 1
-			line_end = text.find("\n", line_start)
-			if line_end == -1:
-				line_end = len(text)
-			for pair in ['‘’', '()', '{}', '[]']:
-				cnt = text.count(pair[0], line_start, line_end)
-				if cnt > 0 and cnt == text.count(pair[1], line_start, line_end):
-					for c in re.compile("[" + pair[0] + ("\\" if pair == '[]' else '') + pair[1] + "]").finditer(text, line_start, line_end):
-						erase_chars.append(c.start())
+		# while line_end < len(text):
+		# 	line_start = line_end + 1
+		# 	line_end = text.find("\n", line_start)
+		# 	if line_end == -1:
+		# 		line_end = len(text)
+		# 	for pair in ['‘’', '()', '{}', '[]']:
+		# 		cnt = text.count(pair[0], line_start, line_end)
+		# 		if cnt > 0 and cnt == text.count(pair[1], line_start, line_end):
+		# 			for c in re.compile("[" + pair[0] + ("\\" if pair == '[]' else '') + pair[1] + "]").finditer(text, line_start, line_end):
+		# 				erase_chars.append(c.start())
+		# выше написана вообще какая-то хрень :)(:
+		i = 0
+		while i < len(text):
+			if text[i] in "‘({[": # ]})’
+				end = find_ending_bracket(text, i, text[i], {"‘": "’", "(": ")", "{": "}", "[": "]"}[text[i]], None)
+				if end:
+					erase_chars.extend([i, end])
+			i += 1
+
 		for pos in sorted(erase_chars, reverse = True):
 			self.view.erase(edit, sublime.Region(pos, pos+1))
 
@@ -492,12 +501,13 @@ class f1_command(sublime_plugin.TextCommand):
 					sq_brackets.b -= 1
 					sq_str = self.view.substr(sq_brackets)
 					if len(sq_str) > 1 and sq_str[0] == '-' and sq_str[-1] == '-': # проверка len(sq_str) > 1 нужна, чтобы запись [-] не считалась как задача
-						self.view.sel().clear()
-					#	self.view.sel().add(sublime.Region(sq_brackets.a, sq_brackets.a+1))
-						self.view.sel().add(sublime.Region(sq_brackets.b-1, sq_brackets.b))
-						self.view.replace(edit, sublime.Region(sq_brackets.a, sq_brackets.a+1), '+')
-						self.view.replace(edit, sublime.Region(sq_brackets.b-1, sq_brackets.b), '+')
-						return
+						if sublime.ok_cancel_dialog("Выполнили задачу?"):
+							self.view.sel().clear()
+						#	self.view.sel().add(sublime.Region(sq_brackets.a, sq_brackets.a+1))
+							self.view.sel().add(sublime.Region(sq_brackets.b-1, sq_brackets.b))
+							self.view.replace(edit, sublime.Region(sq_brackets.a, sq_brackets.a+1), '+')
+							self.view.replace(edit, sublime.Region(sq_brackets.b-1, sq_brackets.b), '+')
+							return
 
 			def pq_to_habrahabr_html():
 				pq_text = selected_text
@@ -798,7 +808,7 @@ class sha3_ctrl_shift_i(sublime_plugin.TextCommand):
 
 		new_text = selected_text
 		dict = {}
-		for en in ['utf-8']:#, 'UTF', 'cyrillic', 'maccyrillic', 'cyrillic-asian', 'koi8_u', 'IBM855', 'IBM866', 'windows-1251', 'koi8_r', 'utf8']: # TODO: ADD 'ruscii[=ibm1125|cp866u]'
+		for en in ['utf-8']:#, '['*0+'UTF', 'cyrillic', 'maccyrillic', 'cyrillic-asian', 'koi8_u', 'IBM855', 'IBM866', 'windows-1251', 'koi8_r', 'utf8']: # TODO: ADD 'ruscii[=ibm1125|cp866u]'
 			text_as_binary = selected_text.encode(en, errors = 'ignore')
 			hash =(as_hex_str(CompactFIPS202.SHA3_512(text_as_binary)) +
 			'\n' + as_hex_str(CompactFIPS202.Keccak(576, 1024, text_as_binary, 0x01, 512//8)))
@@ -865,20 +875,26 @@ def dropbox_dir():
 			if v.file_name().startswith("B:\\"):
 				return "B:\\"
 
-def find_ending_sq_bracket(str, i):
-	assert(str[i] == "[") # ]
+def find_ending_bracket(str, i, Lbr = '‘', rbR = '’', error = 'Unpaired `#`'):
+	assert(str[i] == Lbr)
 	nesting_level = 0
 	while True:
 		ch = str[i]
-		if ch == "[":
+		if ch == Lbr:
 			nesting_level += 1
-		elif ch == "]":
+		elif ch == rbR:
 			nesting_level -= 1
 			if nesting_level == 0:
 				return i
 		i += 1
 		if i == len(str):
-			raise 'Unpaired `[`' # ]
+			if error:
+				raise error.replace('#', Lbr)
+			else:
+				return None
+
+def find_ending_sq_bracket(str, i):
+	return find_ending_bracket(str, i, '[', ']')
 
 class last_log_ctrl_shift_l(sublime_plugin.TextCommand):
 	def run(self, edit):
@@ -938,7 +954,8 @@ class last_log_ctrl_shift_l(sublime_plugin.TextCommand):
 					if lv != 0 and lvs[0] != "!": # [-для чего это я делал?-]
 						assert(lvs[0] == "?")
 						lv = -lv
-					if lvs.startswith("!") or (content[found.start(0)+2:found.start(0)+4].isdigit()): # O‘ОТОБРАЖАТЬ ТОЛЬКО ВАЖНЫЕ[‘с символом ! вначале’] ЗАДАЧИ’ [[[О‘’ — ОПЦИЯ\OPTION]]]
+					if (content[found.start(0)+2:found.start(0)+3].isdigit() # заменил +4 на +3 так как должна работать запись вида [-6 15:10 D738 научно-практический семинар для аспирантов набора 2017-] — речь про 6 число текущего месяца
+							or lvs.startswith("!")): # O‘ОТОБРАЖАТЬ ТОЛЬКО ВАЖНЫЕ[‘с символом ! вначале’] ЗАДАЧИ’ [[[О‘’ — ОПЦИЯ\OPTION]]]
 						tasks_list.append(TaskInfo(lv, content[found.start(0):end_sqb_pos+1], self.i + 1 + found.start(0), self.i + 1 + end_sqb_pos+1, self.fcontents, self.fname, self.date_time))
 				return logr, tasks_list
 
@@ -1204,7 +1221,7 @@ class LoadListener(sublime_plugin.EventListener): # https://forum.sublimetext.co
 				if r == sublime.Region(-1):
 					break
 				if view.substr(sublime.Region(r.a-2, r.a)) == ":‘": # ’
-					continue # пропускаем все ссылки на файлы (:так проще:), иначе не будут работать ссылки внутри файла (например: `[./этот_файл:‘текст’] ... текст` нажатие по ссылке выделит первый `текст`, а должно выделить второй)
+					continue # пропускаем все ссылки на файлы (:так проще {и это автоматически работает также для ссылок [:‘...’]}:), иначе не будут работать ссылки внутри файла (например: `[./этот_файл:‘текст’] ... текст` нажатие по ссылке выделит первый `текст`, а должно выделить второй)
 				break
 		else:
 			return
@@ -1274,7 +1291,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 	def run(self, edit):
 		def open_dropbox_file_and_go_to_text(file_name, text, region = None):
 			global target_view, target_text, target_region
-			target_view = sublime.active_window().open_file(dropbox_dir()*0 + os.path.dirname(self.view.file_name()) +"/"+ file_name)
+			target_view = sublime.active_window().open_file(os.path.dirname(self.view.file_name() if self.view.file_name() else dropbox_dir()) +"/"+ file_name) # self.view.file_name() == None для файла ДЕЛА
 			target_text = text
 			target_region = region
 			if not target_view.is_loading():
@@ -1319,7 +1336,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 				if fname_brackets != None:
 					open_dropbox_file_and_go_to_text(self.view.substr(fname_brackets)[1:-1], self.view.substr(sq_brackets))
 				return
-			if self.view.substr(sublime.Region(sq_brackets.begin()+1, sq_brackets.begin()+3)) == "./": # this is file reference or task
+			if self.view.substr(sublime.Region(sq_brackets.begin()+1, sq_brackets.begin()+3)) in ("./", ":‘"): # this is file reference or task [[[’]]]
 				if self.view.substr(sublime.Region(sq_brackets.begin()-2, sq_brackets.begin())) == "-]": # this is task\это задача (переход в обработку)
 					sq_brackets = sublime.Region(sq_brackets.begin()-1)
 					continue
@@ -1342,7 +1359,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 					#else:
 					#	target_text = ""
 					filename = file_ref[0]
-				open_dropbox_file_and_go_to_text(filename, target_text)
+				open_dropbox_file_and_go_to_text(filename if filename else os.path.basename(self.view.file_name()), target_text) # filename пустой в случае ссылки вида [:‘...’]
 				return
 			if self.view.substr(sublime.Region(sq_brackets.begin()+1, sq_brackets.begin()+1+4)) == "http": # this is web/external link
 				link = self.view.substr(sq_brackets)[1:-1]
