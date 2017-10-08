@@ -5,6 +5,7 @@ import datetime, getpass
 class AddDateTimeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         self.view.run_command("insert_snippet", { "contents": datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S") })#({# БЫЛО: "("+str(int(time.time()))+"±X)" } )
+    	# [-!{писал в pq.pq, вставил из [./м.txt]:‘...23:33 02.09.2016...’ и задумался: а почему такой формат то? где я это писал, в блокноте, что ли? псевдографику в блокноте? seriously?} проанализировать историю изменения предыдущей строки кода и найти все форматы, в которых вставлялась дата посредством AddDateTimeCommand-]
         #self.view.run_command("insert_snippet", { "contents": "("+str(int(time.time()))+"±?)" })
 class AddEndDateTimeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -519,6 +520,8 @@ class f1_command(sublime_plugin.TextCommand):
 					f.write(pq_text)
 				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --habrahabr-html "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
 					sublime.set_clipboard(open(fname + '.html', encoding = 'utf-8').read())
+				else:
+					sublime.message_dialog('ERROR (see console for details)')
 			def pq_to_html():
 				pq_text = selected_text
 				if pq_text == "": # находим всю запись в том месте, где стоит курсор
@@ -533,6 +536,8 @@ class f1_command(sublime_plugin.TextCommand):
 			#	if exec_command(r'pythonw C:\!GIT-HUB\adamaveli.name\tools\pq.txt2html.py "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
 				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
 					webbrowser.open(fname + '.html')
+				else:
+					sublime.message_dialog('ERROR (see console for details)')
 			def pq_remove_comments_and_copy_to_clipboard():
 				#sublime.set_clipboard(re.sub(R'\[\[\[(.*?)]]]', '', selected_text))
 				nonlocal selected_text
