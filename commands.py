@@ -380,7 +380,7 @@ class f1_command(sublime_plugin.TextCommand):
 		while i < len(text):
 			if text[i] in "‘({[": # ]})’
 				end = find_ending_bracket(text, i, text[i], {"‘": "’", "(": ")", "{": "}", "[": "]"}[text[i]], None)
-				if end:
+				if end != None: # если find_ending_bracket вернёт 0, то `if end:` сработает также как и с None (в данном случае, конечно, это не важно, так как find_ending_bracket не может вернуть 0, но вообще, если переменная может быть None, тогда её обязательно проверять на None, неявно преобразовывать не None в True — недопустимо, я считаю)
 					erase_chars.extend([i, end])
 			i += 1
 
@@ -946,7 +946,15 @@ class last_log_ctrl_shift_l(sublime_plugin.TextCommand):
 				for found in re.finditer(R'\[-([!?]*)', content, re.DOTALL):
 					# if found.group(2) != '-': #исправление\fix для\for `[[[-‘в API/формате’]]]`
 					#	continue
-					end_sqb_pos = find_ending_sq_bracket(content, found.start(0))
+
+					# Чуть не ошибся {проверял то [поведение] как было раньше, чтобы написать commit message} и не закоммитил:
+					# end_sqb_pos = find_ending_bracket(content, found.start(0), '[', ']')
+					# if end_sqb_pos == None:
+					# Очевидно, должна быть ошибка компиляции: проверка на None переменной, которая в принципе не может быть None
+					end_sqb_pos = find_ending_bracket(content, found.start(0), '[', ']', None)
+					if end_sqb_pos == None:
+						print('ERROR in ' + self.fname + ' at position ' + str(self.i + 1 + found.start(0)))
+						continue
 					if content[end_sqb_pos-1] != '-':
 						continue
 					lvs = found.group(1)
