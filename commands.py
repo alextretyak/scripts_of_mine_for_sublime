@@ -522,7 +522,10 @@ class f1_command(sublime_plugin.TextCommand):
 			def pq_to_html():
 				pq_text = selected_text
 				if pq_text == "": # находим всю запись в том месте, где стоит курсор
-					pq_text = view().substr(sublime.Region(find_line_with_date(-1).end(), find_line_with_date(1).begin())).rstrip("\n")
+					if view().file_name().endswith('.pq'): # в файлах .pq всегда берём весь текст (дневники будут в формате .txt или .pq.txt)
+						pq_text = view().substr(sublime.Region(0, view().size()))
+					else:
+						pq_text = view().substr(sublime.Region(find_line_with_date(-1).end(), find_line_with_date(1).begin())).rstrip("\n")
 
 				fname = os.getenv('TEMP') + r'\pq_to_html'
 				with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
@@ -1339,7 +1342,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 			if sq_brackets == None:
 				break
 			if (self.view.substr(sublime.Region(sq_brackets.begin(), sq_brackets.begin()+2)) == "[-" and
-			    self.view.substr(sublime.Region(sq_brackets.end()-2, sq_brackets.end()  +3)) == "-][./"): # this is task\это задача (обработка)
+			    self.view.substr(sublime.Region(sq_brackets.end()-2, sq_brackets.end()  +3)) == "-][./"): # this is task\это задача (обработка) \\ end() + -2..<3
 				fname_brackets = find_matching_sq_brackets(sublime.Region(sq_brackets.end() + 1))
 				if fname_brackets != None:
 					open_dropbox_file_and_go_to_text(self.view.substr(fname_brackets)[1:-1], self.view.substr(sq_brackets))
