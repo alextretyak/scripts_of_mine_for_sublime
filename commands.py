@@ -5,7 +5,7 @@ import datetime, getpass
 class AddDateTimeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         self.view.run_command("insert_snippet", { "contents": datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S") })#({# БЫЛО: "("+str(int(time.time()))+"±X)" } )
-    	# [-!{писал в pq.pq, вставил из [./м.txt]:‘...23:33 02.09.2016...’ и задумался: а почему такой формат то? где я это писал, в блокноте, что ли? псевдографику в блокноте? seriously?} проанализировать историю изменения предыдущей строки кода и найти все форматы, в которых вставлялась дата посредством AddDateTimeCommand-]
+    	# [-!{писал в pq.pq, вставил из [./м.txt]:‘...23:33 02.09.2016...’ и задумался: а почему такой формат то? где я это писал, в блокноте, что ли? псевдографику в блокноте? seriously?} проанализировать историю [изменений/]правок предыдущей строки кода {на основе ‘полной[!] истории [изменений/]правок данного файла’[https://www.dropbox.com/sh/bfz3ctnvq0db24t/AACyfEH87Zw2lvNfyY1PLs0ga]} и найти все форматы, в которых вставлялась дата посредством AddDateTimeCommand-]
         #self.view.run_command("insert_snippet", { "contents": "("+str(int(time.time()))+"±?)" })
 class AddEndDateTimeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -451,7 +451,6 @@ class f1_command(sublime_plugin.TextCommand):
 						result = selected_text + "\n" + format_time(start) + "\n" + format_time(start + 21839)
 
 		if result == '':
-
 			if not shift_key_pressed:
 			   #if len(selected_text) == 1 and len(self.view.sel()) == 1: # выбран только один символ — показываем информацию по нему\show character info
 				if len(selected_text) == 1                              : # выбран только один символ — показываем информацию по нему\show character info
@@ -525,7 +524,7 @@ class f1_command(sublime_plugin.TextCommand):
 			def pq_to_html():
 				pq_text = selected_text
 				if pq_text == "": # находим всю запись в том месте, где стоит курсор
-					if view().file_name().endswith('.pq'): # в файлах .pq всегда берём весь текст (дневники будут в формате .txt или .pq.txt)
+					if view().file_name() and view().file_name().endswith('.pq'): # в файлах .pq всегда берём весь текст (дневники будут в формате .txt или .pq.txt)
 						pq_text = view().substr(sublime.Region(0, view().size()))
 					else:
 						pq_text = view().substr(sublime.Region(find_line_with_date(-1).end(), find_line_with_date(1).begin())).rstrip("\n")
@@ -1307,7 +1306,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 	def run(self, edit):
 		def open_dropbox_file_and_go_to_text(file_name, text, region = None):
 			global target_view, target_text, target_region
-			target_view = sublime.active_window().open_file(os.path.dirname(self.view.file_name() if self.view.file_name() else dropbox_dir()) +"/"+ file_name) # self.view.file_name() == None для файла ДЕЛА
+			target_view = sublime.active_window().open_file(os.path.dirname(self.view.file_name() if self.view.file_name() else dropbox_dir()) +"/"+ file_name) # self.view.file_name() == None для файла ДЕЛА [ну а также для только что созданных несохранённых файлов]
 			target_text = text
 			target_region = region
 			if not target_view.is_loading():
@@ -1418,7 +1417,7 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 			right += 1
 """
 
-"""
+""" # from here [https://github.com/SublimeTextIssues/Core/issues/1461#issuecomment-257859379] (left for historical purpose)
 def are_all_selections_equal(view):
     first_sel_str = view.substr(view.sel()[0])
     for i in range(1, len(view.sel())):
