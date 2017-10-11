@@ -1374,7 +1374,9 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 					elif file_ref[1][0] == "‘":
 						startqpos = sq_brackets.begin() + len(file_ref[0]) + 2
 						target_text = self.view.substr(sublime.Region(startqpos+1, find_ending_pair_quote(self, startqpos)))
-					#else:
+					else:
+						sublime.message_dialog('Wrong format (should be [./fname:DIGITS] or [./fname:‘TEXT’] or [:‘TEXT’])')
+						return
 					#	target_text = ""
 					filename = file_ref[0]
 				open_dropbox_file_and_go_to_text(filename if filename else os.path.basename(self.view.file_name()), target_text) # filename пустой в случае ссылки вида [:‘...’]
