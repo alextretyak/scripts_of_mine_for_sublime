@@ -787,7 +787,10 @@ class pq_format_delta(sublime_plugin.TextCommand):
 	  # selected_text = self.view.substr(self.view.sel()[0])
 	   #self.view.run_command("insert_snippet", { "contents": char+"'‘${0:$SELECTION}’'" } )
 	  # replace_selection_with(char + "'" + balance_pq_string(selected_text) + "'")
+		a = self.view.sel()[0].begin()
 		self.view.run_command("insert_pq", {"prefix": char + "'", "postfix": "'"})
+		self.view.sel().clear() # чтобы не делать отдельное сочетание клавиш для pq_format_delta(char=""), то есть чтобы заключить строку в '‘такие’' кавычки {а это очень редко используемая операция} достаточно было нажать ctrl+= или ctrl+- и затем backspace или delete
+		self.view.sel().add(sublime.Region(a, a+1)) # :( хочу писать так: add(`[a, a+1]) ):
 
 class pq_format_delta_with_timestamp(sublime_plugin.TextCommand):
 	def run(self, edit, char):

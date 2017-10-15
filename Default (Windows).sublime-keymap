@@ -88,10 +88,10 @@
 	{ "keys": ["alt+ctrl+="], "command": "pq_format_superdelta", "args": {"char": "+"} },
 	{ "keys": ["alt+super+-"], "command": "pq_format_superdelta", "args": {"char": "-"} },
 	{ "keys": ["alt+control+="], "command": "pq_format_delta", "args": {"char": "+"} },
-	{ "keys": ["alt+-"], "command": "pq_format_delta", "args": {"char": "-"} },
-	{ "keys": ["alt+="], "command": "pq_format_delta", "args": {"char": "+"} },
+//	{ "keys": ["alt+-"], "command": "pq_format_delta", "args": {"char": "-"} },
+//	{ "keys": ["alt+="], "command": "pq_format_delta", "args": {"char": "+"} },
 	{ "keys": ["ctrl+-"], "command": "pq_format_delta", "args": {"char": "-"} },
-	{ "keys": ["ctrl+="], "command": "pq_format_delta", "args": {"char": ""} }, // \\\ # символ РАВНО (`=`) ЗНАЧИТ RAW\СЫРОЙ
+	{ "keys": ["ctrl+="], "command": "pq_format_delta", "args": {"char": "+"} }, // \\\ # символ РАВНО (`=`) ЗНАЧИТ RAW\СЫРОЙ
 	//{ "keys": ["-"], "command": "pq_format_char", "args": {"char": "-"} }, // \\\ # без shift так как удаление должно делаться легко
 //	{ "keys": ["+"], "command": "pq_format_delta", "args": {"char": "+"} }, // \\\ # shift+‘+/=’ так как добавление должно делаться тяжело
 	//{ "keys": ["~"], "command": "pq_format_char", "args": {"char": "~"} },
