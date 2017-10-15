@@ -1,0 +1,142 @@
+[
+	//{ "keys": ["ctrl+shift+v"], "command": "paste_from_history" },
+	{ "keys": ["ctrl+y"], "command": "redo" },
+	{"keys": ["f5"], "command": "add_date_time" },
+	{"keys": ["shift+f5"], "command": "add_end_date_time" },
+	{"keys": ["f1"], "command": "f1" },
+	{"keys": ["shift+f1"], "command": "f1", "args": {"shift_key_pressed": true} },
+	{"keys": ["f12"], "command": "f12_goto_definition" },
+	{"keys": ["ctrl+f5"], "command": "ctrl_f5" },//ЗАПУСТИТЬ ФАЙЛ file_name() + ".cmd"
+	{"keys": ["ctrl+f10"], "command": "ctrl_f10"/*, "args": {"sel": "${SELECTION}"}*/ }, //ВСТАВИТЬ СИМВОЛ ПО ЕГО HEX-КОДУ или ВСТАВИТЬ КОД выделенного СИМВОЛА
+	{"keys": ["ctrl+f11"], "command": "ctrl_f11" },//ПОДЧЁРКИВАНИЕ/UNDERLINE
+	{"keys": ["ctrl+shift+f11"], "command": "shift_ctrl_f11" },//УБРАТЬ ПОДЧЁРКИВАНИЕ/REMOVE UNDERLINE
+	{"keys": ["ctrl+shift+i"], "command": "sha3_ctrl_shift_i" },//ВЫЧИСЛИТЬ ША3 ОТ ВЫДЕЛЕННОЙ СТРОКИ
+	{"keys": ["ctrl+shift+l"], "command": "last_log_ctrl_shift_l" },//Показать Last [Log] (последние сделанные записи), а также список *‘д’ел (кнопка l находится на кнопке д)
+	{"keys": ["ctrl+alt+shift+l"], "command": "split_selection_into_lines" },
+	{"keys": ["f9"], "command": "last_log_ctrl_shift_l" },//Показать Last [Log] (последние сделанные записи)
+	{"keys": ["ctrl+alt+shift+f"], "command": "search_in_records_ctrl_alt_shift_f" },//Поиск текста во всех записях и вывод всех записей, содержащих данный/найденный текст
+	{ "keys": ["ctrl+shift+u"], "command": "unbound" },
+	{ "command": /*БЫЛО "soft_redo" СТАЛО*/ "upper_case" , "keys": ["ctrl+u"] },
+	{ "command": /*БЫЛО "soft_undo" СТАЛО*/ "lower_case" , "keys": ["ctrl+j"] },
+	{ "command":        "soft_undo"                      , "keys": [ "alt+z"] },
+	{ "command":        "soft_redo"                      , "keys": [ "alt+y"] },
+	{ "keys": ["-", "-"], "command": "insert_snippet", "args": {"contents": "—"} },
+//	{ "keys": [":", ")"], "command": "insert_snippet", "args": {"contents": "☺☻"} },
+//	{ "keys": [":", "("], "command": "insert_snippet", "args": {"contents": "☻☺"} },
+	{ "keys": [":",      "("], "command": "insert_snippet", "args": {"contents":  ":():" } },
+	{ "keys": [":",      ")"], "command": "insert_snippet", "args": {"contents":  ":)(:" } },
+	{ "keys": [":", "-", ")"], "command": "insert_snippet", "args": {"contents": ":-)(-:"} },
+	{ "keys": [":", "-", "("], "command": "insert_snippet", "args": {"contents": ":-()-:"} },
+//	{ "keys": ["super+'"], "command": "insert_snippet", "args": {"contents": "`${SELECTION}'"} },
+//	{ "keys": ["super+`"], "command": "insert_snippet", "args": {"contents": "`${SELECTION}´"} }, //Вместо Accute Accent U+00B4 (´)
+//	{ "keys": ["super+`"], "command": "insert_snippet", "args": {"contents": "‘${0:$SELECTION}’"} }, //[в 2016.03.08, 22:ХХ] пришлось перейти на кавычки ‘’, так как символа U+00B4 нет в кодировке Windows-1251 (а также в CP-866) и в batch-файлах его использовать неполучается
+	{ "keys": ["super+`"], "command": "insert_pq" },
+	//{ "keys": ["alt+`"], "command": "insert_pq" },
+
+    { "keys": [     "alt+`"], "command": "pq_format_char", "args": {"char": "~"} }, // для русской раскладки
+    { "keys": ["ctrl+alt+`"], "command": "pq_format_char", "args": {"char": "~"} }, // для русской раскладки
+    //(почему ~, а не ` — обычно код всё равно на английском и для ввода символа ` допустимо переключать раскладку)
+
+    { "keys": [     "alt+3"], "command": "pq_format_char", "args": {"char": "#"} }, // для русской раскладки
+    { "keys": ["ctrl+alt+3"], "command": "pq_format_char", "args": {"char": "#"} }, // для русской раскладки
+    { "keys": [     "alt+2"], "command": "insert", "args": {"characters": "@"} }, // для русской раскладки
+    { "keys": ["ctrl+alt+2"], "command": "insert", "args": {"characters": "@"} }, // для русской раскладки
+    { "keys": [     "alt+4"], "command": "insert", "args": {"characters": "$"} }, // для русской раскладки
+    { "keys": ["ctrl+alt+4"], "command": "insert", "args": {"characters": "$"} }, // для русской раскладки
+    { "keys": [     "alt+6"], "command": "insert", "args": {"characters": "^"} }, // для русской раскладки
+    { "keys": ["ctrl+alt+6"], "command": "insert", "args": {"characters": "^"} }, // для русской раскладки
+    { "keys": [     "alt+7"], "command": "insert", "args": {"characters": "&"} }, // для русской раскладки
+    { "keys": ["ctrl+alt+7"], "command": "insert", "args": {"characters": "&"} }, // для русской раскладки
+
+	//{ "keys": ["‘"], "command": "insert_pq" }, // ’ (for balance)
+//	{ "keys": ["alt+9"], "command": "insert_pq" }, // ‘ (for balance)
+//	{ "keys": ["alt+0"], "command": "insert_snippet", "args": {"contents": "’"} },
+//	{ "keys": ["ctrl+alt+9"], "command": "insert_pq" }, // ‘ (for balance)              // pressing right alt+9 is treated as ctrl+alt+9
+//	{ "keys": ["ctrl+alt+0"], "command": "insert_snippet", "args": {"contents": "’"} }, // pressing right alt+0 is treated as ctrl+alt+0
+	{ "keys": ["ctrl+shift+2"], "command": "insert_snippet", "args": {"contents": "“${0:$SELECTION}”"} },
+	{ "keys": ["super+shift+`"], "command": "insert_snippet", "args": {"contents": "’${0:$SELECTION}‘"} },
+	//{ "keys": ["alt+shift+`"], "command": "insert_snippet", "args": {"contents": "’${0:$SELECTION}‘"} },
+	{ "keys": ["alt+shift+`"], "command": "insert", "args": {"characters": "`"} },
+	{ "keys": ["ctrl+["], "command": "insert_snippet", "args": {"contents": "[${0:$SELECTION}]"} },
+	{ "keys": ["ctrl+]"], "command": "insert_snippet", "args": {"contents":  "${SELECTION}]$0"} },
+	{ "keys": ["ctrl+,"], "command": "insert_snippet", "args": {"contents": "<"} },
+	{ "keys": ["ctrl+."], "command": "insert_snippet", "args": {"contents": ">"} },
+	{ "keys": ["ctrl+'"], "command": "insert_snippet", "args": {"contents": "'"} },
+	{ "keys": ["ctrl+;"], "command": "insert_snippet", "args": {"contents": ":"} },
+	{ "keys": ["ctrl+shift+;"], "command": "insert_snippet", "args": {"contents": ";"} },
+	{ "keys": ["ctrl+\\"], "command": "insert_snippet", "args": {"contents": "|"} },
+	{ "keys": ["ctrl+1"], "command": "insert_snippet", "args": {"contents": "!"} },
+	{ "keys": ["ctrl+2"], "command": "insert_snippet", "args": {"contents": "\""} },
+	{ "keys": ["ctrl+3"], "command": "insert_snippet", "args": {"contents": "#"} },
+	{ "keys": ["ctrl+4"], "command": "insert_snippet", "args": {"contents": "$"} },
+	{ "keys": ["ctrl+5"], "command": "insert_snippet", "args": {"contents": "%"} },
+	{ "keys": ["ctrl+6"], "command": "insert_snippet", "args": {"contents": "^"} },
+	{ "keys": ["ctrl+7"], "command": "insert_snippet", "args": {"contents": "&"} },
+	{ "keys": ["ctrl+shift+["], "command": "insert_snippet", "args": {"contents": "{${0:$SELECTION}}"} },
+	{ "keys": ["ctrl+shift+]"], "command": "insert_snippet", "args": {"contents": "$SELECTION}$0"} },
+//	{ "keys": ["ctrl+shift+`"], "command": "insert_snippet", "args": {"contents": "~${0:$SELECTION}"} },
+	{ "keys": ["ctrl+f12"], "command": "goto_definition" },
+//	{ "keys": ["*"], "command": "insert_snippet", "args": {"contents": "*${0:$SELECTION}"} },
+	//{ "keys": ["*"], "command": "pq_format_char", "args": {"char": "*"} },
+	{ "keys": ["ctrl+shift+-"], "command": "pq_format_delta_with_timestamp", "args": {"char": "-"} },
+	{ "keys": ["ctrl+shift+="], "command": "pq_format_delta_with_timestamp", "args": {"char": "+"} },
+	{ "keys": ["shift+super+-"], "command": "pq_format_superdelta", "args": {"char": "-"} },
+	{ "keys": ["shift+super+="], "command": "pq_format_superdelta", "args": {"char": "+"} },
+	{ "keys": ["super+ctrl+-"], "command": "pq_format_superdelta", "args": {"char": "-"} },
+	{ "keys": ["super+ctrl+="], "command": "pq_format_superdelta", "args": {"char": "+"} },
+	{ "keys": ["alt+ctrl+-"], "command": "pq_format_superdelta", "args": {"char": "-"} },
+	{ "keys": ["alt+ctrl+="], "command": "pq_format_superdelta", "args": {"char": "+"} },
+	{ "keys": ["alt+super+-"], "command": "pq_format_superdelta", "args": {"char": "-"} },
+	{ "keys": ["alt+control+="], "command": "pq_format_delta", "args": {"char": "+"} },
+	{ "keys": ["alt+-"], "command": "pq_format_delta", "args": {"char": "-"} },
+	{ "keys": ["alt+="], "command": "pq_format_delta", "args": {"char": "+"} },
+	{ "keys": ["ctrl+-"], "command": "pq_format_delta", "args": {"char": "-"} },
+	{ "keys": ["ctrl+="], "command": "pq_format_delta", "args": {"char": ""} }, // \\\ # символ РАВНО (`=`) ЗНАЧИТ RAW\СЫРОЙ
+	//{ "keys": ["-"], "command": "pq_format_char", "args": {"char": "-"} }, // \\\ # без shift так как удаление должно делаться легко
+//	{ "keys": ["+"], "command": "pq_format_delta", "args": {"char": "+"} }, // \\\ # shift+‘+/=’ так как добавление должно делаться тяжело
+	//{ "keys": ["~"], "command": "pq_format_char", "args": {"char": "~"} },
+	//{ "keys": ["_"], "command": "pq_format_char", "args": {"char": "_"} },
+	{ "keys": ["!"], "command": "pq_format_char", "args": {"char": "!"} },
+	{ "keys": ["#"], "command": "pq_format_char", "args": {"char": "#"} },
+	{ "keys": ["ctrl+shift+`"], "command": "pq_format_char", "args": {"char": "~"} }, // это чтобы ввести символ ~ при активной русской раскладке
+	{ "keys": ["alt+left"],  "command": "unbound" },
+	{ "keys": ["alt+right"],  "command": "unbound" },
+	{ "keys": ["ctrl+t"],  "command": "unbound" },
+	{ "keys": ["alt+1"], "command": "noop" },
+	//{ "keys": ["alt+2"], "command": "unbound" },
+	{ "keys": ["alt+3"], "command": "unbound" },
+	//{ "keys": ["alt+4"], "command": "unbound" },
+	{ "keys": ["alt+5"], "command": "unbound" },
+	//{ "keys": ["alt+6"], "command": "unbound" },
+	//{ "keys": ["alt+7"], "command": "unbound" },
+	{ "keys": ["alt+8"], "command": "unbound" },
+	//{ "keys": ["alt+9"], "command": "unbound" },
+	//{ "keys": ["alt+0"], "command": "unbound" },
+// { "keys": ["shift+delete"], "command": "cut_copy_one", "args": {"command": "cut"}},
+// { "keys": ["ctrl+x"      ], "command": "cut_copy_one", "args": {"command": "cut"}},
+// { "keys": ["ctrl+insert" ], "command": "cut_copy_one", "args": {"command": "copy"}},
+// { "keys": ["ctrl+c"      ], "command": "cut_copy_one", "args": {"command": "copy"}},
+{ "keys": ["ctrl+shift+d"], "command": "file_diff_menu" },
+
+{ "keys": ["shift+pause"], "command": "punto_switcher_emulator" },
+
+	//{ "keys":   ["alt+4"], "command": "insert", "args": {"characters":  "[[[$‘3*\"прошу прощения\"’]]]" } },
+	{ "keys":  ["ctrl+4"], "command": "insert", "args": {"characters":  "[[[$‘3*\"прошу прощения\"’]]]" } },
+//	{ "keys": ["shift+4"], "command": "insert", "args": {"characters":  "[[[$‘3*\"прошу прощения\"’]]]" } },
+	//{ "keys":   ["ctrl+alt+4"], "command": "insert", "args": {"characters":  "[[[$$‘2*3*\"прошу прощения\"’]]]" } },
+	{ "keys":  ["shift+alt+4"], "command": "insert", "args": {"characters":  "[[[$$‘2*3*\"прошу прощения\"’]]]" } },
+	{ "keys": ["shift+ctrl+4"], "command": "insert", "args": {"characters":  "[[[$$‘2*3*\"прошу прощения\"’]]]" } },
+	{ "keys": ["shift+ctrl+alt+4"], "command": "insert", "args": {"characters":  "[[[$$$‘3*3*\"прошу прощения\"’]]]" } },
+
+	{ "keys": ["ctrl+keypad_multiply"], "command": "reset_font_size" },
+
+    { "keys": ["*"], "command": "pq_format_char", "args": {"char": "*"} },
+    { "keys": ["_"], "command": "pq_format_char", "args": {"char": "_"} },
+    { "keys": ["-"], "command": "pq_format_char", "args": {"char": "-"} },
+    { "keys": ["~"], "command": "pq_format_char", "args": {"char": "~"} },
+
+    // { "keys": ["ё"], "command": "insert", "args": {"characters": "`"} },
+    // { "keys": ["Ё"], "command": "insert", "args": {"characters": "~"} },
+	{ "keys": ["ctrl+shift+up"], "command": "-" },
+	{ "keys": ["ctrl+shift+down"], "command": "-" },
+]
