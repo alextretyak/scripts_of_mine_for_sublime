@@ -1,10 +1,15 @@
-import sublime, sublime_plugin, os, re, sys, binascii, urllib, subprocess, calendar, time, copy, unicodedata, inspect
+import sublime, sublime_plugin, os, re, sys, binascii, urllib, subprocess, calendar, time, copy, unicodedata, inspect, math
 
 #ИЗ http://stackoverflow.com/questions/11879481/can-i-add-date-time-for-sublime-snippet
 import datetime, getpass
 class AddDateTimeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        self.view.run_command("insert_snippet", { "contents": datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S") })#({# БЫЛО: "("+str(int(time.time()))+"±X)" } )
+        ms = ""
+        pq = find_matching_paired_quotes(self.view.sel()[0])
+        if pq != None:
+            if self.view.substr(sublime.Region(pq.a-2, pq.a)) in ('TC', 'ТС'): # если курсор находится в блоке[/области] точки синхронизации, то повышаем точность вставляемого времени до миллисекунд
+                ms = ("%.3f" % math.modf(time.time())[0])[1:]
+        self.view.run_command("insert_snippet", { "contents": datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S" + ms) })#({# БЫЛО: "("+str(int(time.time()))+"±X)" } )
     	# [-!{писал в pq.pq, вставил из [./м.txt]:‘...23:33 02.09.2016...’ и задумался: а почему такой формат то? где я это писал, в блокноте, что ли? псевдографику в блокноте? seriously?} проанализировать историю [изменений/]правок предыдущей строки кода {на основе ‘полной[!] истории [изменений/]правок данного файла’[https://www.dropbox.com/sh/bfz3ctnvq0db24t/AACyfEH87Zw2lvNfyY1PLs0ga]} и найти все форматы, в которых вставлялась дата посредством AddDateTimeCommand-]
         #self.view.run_command("insert_snippet", { "contents": "("+str(int(time.time()))+"±?)" })
 class AddEndDateTimeCommand(sublime_plugin.TextCommand):

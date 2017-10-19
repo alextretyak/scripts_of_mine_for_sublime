@@ -18,11 +18,16 @@ class Update(sublime_plugin.EventListener):
 					subprocess.Popen(["pythonw", sublime.packages_path() + R"\User\process_search_requests.py", destdir, te, fname])
 				i = e + 1
 
-		if "ifilter.github.io" in view.file_name():
-			os.chdir(os.path.dirname(view.file_name()))
-			#os.system('git commit -a --allow-empty-message -m ""', nowindow=True)
-			print("saved" if subprocess.call('git commit -a --allow-empty-message -m ""', shell=True) == 0 else "NOT SAVED")
-			return
+		# if "ifilter.github.io" in view.file_name():
+		# 	os.chdir(os.path.dirname(view.file_name()))
+		# 	#os.system('git commit -a --allow-empty-message -m ""', nowindow=True)
+		# 	print("saved" if subprocess.call('git commit -a --allow-empty-message -m ""', shell=True) == 0 else "NOT SAVED")
+		# 	return
+
+		# if "proglangs.github.io" in view.file_name() and view.file_name().endswith('.pq'): # это было актуально, когда я трансформировал personal_storage.pq в personal_storage/index.php и этот файл автоматически синхронизировался с сервером
+		# 	os.chdir(os.path.dirname(view.file_name()))
+		# 	os.system('process_pq.cmd')
+		# 	return
 
 		if view.file_name().endswith('.py'):
 			pqi = view.file_name().find("pqmarkup")
