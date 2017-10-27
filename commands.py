@@ -765,12 +765,12 @@ class ctrl_f10_command(sublime_plugin.TextCommand):
 class ctrl_f11_command(sublime_plugin.TextCommand):
 	def run(self, edit):
 		selected_text = self.view.substr(self.view.sel()[0])
-		self.view.run_command("insert_snippet", { "contents": re.sub('.', R'_\g<0>', selected_text) } )
+		self.view.run_command("insert_snippet", { "contents": re.sub('.', R'_\b\g<0>', selected_text) } )
 
 class shift_ctrl_f11_command(sublime_plugin.TextCommand):
 	def run(self, edit):
 		selected_text = self.view.substr(self.view.sel()[0])
-		self.view.run_command("insert_snippet", { "contents": selected_text.replace('_', '') } )
+		self.view.run_command("insert_snippet", { "contents": selected_text.replace('_\b', '') } )
 
 class insert_pq_(sublime_plugin.TextCommand):
 	def run(self, edit, prefix = '', postfix = ''):
