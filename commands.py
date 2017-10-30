@@ -426,6 +426,7 @@ class f1_command(sublime_plugin.TextCommand):
 			if len(selected_text) == 2 and selected_text[1] == '’':
 				replace_selection_with(unicodedata.normalize('NFC', selected_text[0].replace('о','o').replace('а','a').replace('е','e') + "\u0301"))
 				return
+			if selected_text == "ae": replace_selection_with("æ") # This line of code is [-as ‘gracefully devoted to’ is not founded via context.reverso.net (see [http://context.reverso.net/перевод/английский-русский/gracefully+devoted+to]), I'd like to perform the following search in context.reverso.net: ‘#adjective# devoted to’-] devoted to [miss[is]] Deep Græy.
 
 			try:
 				if re.match(R"[\da-fA-F]+$", selected_text) and 2 <= len(selected_text) <= 5: # сдалал поддержку multiple selection для обработки файла cp866.txt
