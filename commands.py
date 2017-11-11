@@ -9,15 +9,15 @@ class AddDateTimeCommand(sublime_plugin.TextCommand):
         if pq != None:
             if self.view.substr(sublime.Region(pq.a-2, pq.a)) in ('TC', 'ТС'): # если курсор находится в блоке[/области] точки синхронизации, то повышаем точность вставляемого времени до миллисекунд
                 ms = ("%.3f" % math.modf(time.time())[0])[1:]
-        self.view.run_command("insert_snippet", { "contents": datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S" + ms) })#({# БЫЛО: "("+str(int(time.time()))+"±X)" } )
-    	# [-!{писал в pq.pq, вставил из [./м.txt]:‘...23:33 02.09.2016...’ и задумался: а почему такой формат то? где я это писал, в блокноте, что ли? псевдографику в блокноте? seriously?} проанализировать историю [изменений/]правок предыдущей строки кода {на основе ‘полной[!] истории [изменений/]правок данного файла’[https://www.dropbox.com/sh/bfz3ctnvq0db24t/AACyfEH87Zw2lvNfyY1PLs0ga]} и найти все форматы, в которых вставлялась дата посредством AddDateTimeCommand-]
+        self.view.run_command("insert_snippet", { "contents": datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S" + ms) })#({# БЫЛО: "("+str(int(time.time()))+"±X)" } )
+    	# [-!{писал в pq.pq, вставил из [./м.txt]:‘...23:33 02.09.2016...’ и задумался: а почему такой формат то? где я это писал, в блокноте, что ли? псевдографику в блокноте? seriously?} проанализировать историю [изменений/]правок предыдущей строки кода {на основе ‘полной[!] истории [изменений/]правок данного файла’[https://www.dropbox.com/sh/bfz3ctnvq0db24t/AACyfEH87Zw2lvNfyY1PLs0ga]} и найти все форматы, в которых вставлялась дата посредством AddDateTimeCommand {скорее всего, также как и сейчас просто сломался box_drawing из-за чего сломался F5 из-за чего пришлось вставлять текущее датавремя через блокнот}-]
         #self.view.run_command("insert_snippet", { "contents": "("+str(int(time.time()))+"±?)" })
 class AddEndDateTimeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         self.view.run_command("insert_snippet", { "contents": "(X±"+str(int(time.time()))+")" })# заменил `?±` на `х±` так как в имя файла `?` включать нельзя (пример: [._-'c.txt‘(1477051184±х)’][‘слишком много гордыни’])
 
 def format_time(t):
-	return time.strftime("%Y.%m.%d %H:%M:%S", time.gmtime(t))
+	return time.strftime("%Y.%m.%d %H:%M:%S", time.gmtime(t))
 
 def sassert(str1, str2, hard = True): # string [smart] assert
 	import os, tempfile
@@ -119,13 +119,13 @@ box_drawing_chars_DEFAULT = box_drawing_chars_1
 def box_drawing(text, box_drawing_chars = box_drawing_chars_DEFAULT):
 	box_drawing_chars_iter = iter(box_drawing_chars.split(" "))
 	patterns_str = """
- x   xx ●●● xxx xxx ●●●  ● 
-●─● ●─x ●─● ●─● ●─● ●─● ●─●
- x   xx  x  x●● ●●x  ●  ●●●
+ ●●  x   xx ●●● xxx xxx ●●●  ● 
+●─● ●─● ●─x ●─● ●─● ●─● ●─● ●─●
+ ●●  x   xx  x  x●● ●●x  ●  ●●●
 
-xx  ●●● ●xx
-x┌● x┌● ●┌●
-x●  x●x ●●x
+xx  ●●● ●xx ---
+x┌● x┌● ●┌● -┌+
+x●  x●x ●●x ++-
 
  ●   ●x
 х├● х├●
@@ -180,7 +180,7 @@ x●x
 		return lines[y][x]
 
 	def need_box_drawing(c):
-	    return c in ".?─│┌┐└┘├┤┬┴┼═║╔╗╚╝╠╣╦╩╬"
+	    return c in "*─│┌┐└┘├┤┬┴┼═║╔╗╚╝╠╣╦╩╬"
 
 	def check_pattern(pattern, x, y):
 		for dy in [-1,0,1]:
@@ -190,10 +190,10 @@ x●x
 					if c == ' ': # в этом случае значение безразлично
 						continue
 					bd = need_box_drawing(get(x+dx, y+dy))
-					if c in 'xхХX': # здесь не должно быть box-drawing-элемента
+					if c in 'xхХX-': # здесь не должно быть box-drawing-элемента
 						if bd:
 							return None
-					elif c in 'oOоО●': # здесь должен быть box-drawing-элемент
+					elif c in 'oOоО●+': # здесь должен быть box-drawing-элемент
 						if not bd:
 							return None
 		return pattern[1][1] # прошли все тесты - паттерн подходит - возвращаем символ для замены (всегда в середине паттерна)
@@ -217,20 +217,9 @@ x●x
 	return result[:-1] # `[:-1]` чтобы убрать последний \n
 
 # Some tests:
-sassert(box_drawing("""
-           .......
-         . .......
-         .
-         . .......
-         . .     .
-         . .     .
- ......  . .......
-      .  .
-      .  .
-  .....  .........
-
-  ................
-"""),"""
+def check_box_drawing(s):
+	sassert(box_drawing(s), s, False)
+check_box_drawing("""
            ┌─────┐
          │ └─────┘
          │
@@ -244,39 +233,21 @@ sassert(box_drawing("""
 
   ────────────────
 """)
-sassert(box_drawing("""
-..
-..
-"""),"""
+check_box_drawing("""
 ┌┐
 └┘
 """)
-sassert(box_drawing("""
-...
-. .
-...
-"""),"""
+check_box_drawing("""
 ┌─┐
 │ │
 └─┘
 """)
-sassert(box_drawing("""
-.....
-. . .
-.....
-"""),"""
+check_box_drawing("""
 ┌─┬─┐
 │ │ │
 └─┴─┘
 """)
-sassert(box_drawing("""
-   377
-   S E
-B   .   L
-U ..... L
- T  .  E 
-  TON C
-"""),"""
+check_box_drawing("""
    377
    S E
 B   │   L
@@ -285,9 +256,9 @@ U ──┼── L
   TON C
 """)
 sassert(box_drawing("""
-B   .   L
+B   *   L
 U ──┼── L
- T  .  E 
+ T  *  E 
 """),"""
 B   │   L
 U ──┼── L
@@ -295,7 +266,8 @@ U ──┼── L
 """)
 sassert(box_drawing("""
  │
-???─────┬──────────────────────────────┐
+***─────┬──────────────────────────────┐""" # раньше было `???` вместо `***`
+"""
 │$│СЛОВО│ПОЧЕМУ ЗАПРЕЩЕНО              │
 """),"""
  │
@@ -303,22 +275,14 @@ sassert(box_drawing("""
 │$│СЛОВО│ПОЧЕМУ ЗАПРЕЩЕНО              │
 """
 )
-sassert(box_drawing("""
-1⣀3──ЭТО─?┐ИЛИ┌┐1
-         ?│ИЛИ││2
-         └┘ИЛИ└┘3
-"""),"""
+check_box_drawing( # раньше было два `?`
+"""
 1⣀3──ЭТО──┐ИЛИ┌┐1
          ││ИЛИ││2
          └┘ИЛИ└┘3
 """)
-sassert(box_drawing("""
-1⣀3──ЭТО─?┐ИЛИ┌┐1
-         .
-         ?│ИЛИ││2
-         .
-         └┘ИЛИ└┘3
-"""),"""
+check_box_drawing( # раньше было два `?`
+"""
 1⣀3──ЭТО─┬─ИЛИ──1
          │
          ├─ИЛИ──2
@@ -328,17 +292,7 @@ sassert(box_drawing("""
 #1..3──ЭТО─┬─ИЛИ══1
 #          ├─ИЛИ══2
 #          └─ИЛИ══3
-sassert(box_drawing("""
-.................
-. ............. .
-. . ......... . .
-. . .       . . .
-. . .       . . .
-. . .       . . .
-. . ......... . .
-. ............. .
-.................
-"""),"""
+check_box_drawing("""
 ┌───────────────┐
 │ ┌───────────┐ │
 │ │ ┌───────┐ │ │
@@ -358,6 +312,41 @@ sassert(box_drawing("""
 #   │└─ Wперёд
 #   └──
 # """)
+'''
+check_box_drawing("""
+┌──────────────┐
+│ ┌────┐       │
+│ │|   │       │
+│ └────┘       │
+├──────────────┤
+│ ┌───┐        │
+│ │ 1 │        │
+│ └───┘        │
+│       ┌────┐ │
+│       │1|  │ │
+│       └────┘ │
+├──────────────┤
+│ ┌───┐        │
+│ │ 2 │        │
+│ └───┘        │
+│       ┌────┐ │
+│       │12| │ │
+│       └────┘ │
+├──────────────┤
+│ ┌──────┐     │
+│ │Ctrl+Z│     │
+│ └──────┘     │
+│       ┌────┐ │
+│       │1|  │ │
+│       └────┘ │
+└──────────────┘
+""")
+'''
+check_box_drawing("""
+───┐
+   ├─ РАЗРЫВ
+───┘
+""")
 
 temp_edit_view = None
 class OnPreCloseListener(sublime_plugin.EventListener):
@@ -401,6 +390,9 @@ class f1_command(sublime_plugin.TextCommand):
 		temp_edit_view.set_name(" ")
 		temp_edit_view_prev_view = self.view
 
+	def hide_cursor(self, edit):
+		self.view.sel().clear()
+
 	def run(self, edit, shift_key_pressed = False, redirect_method = None):
 		if redirect_method != None:
 			getattr(self, redirect_method)(edit)
@@ -437,7 +429,7 @@ class f1_command(sublime_plugin.TextCommand):
 					return
 
 				result = (urllib.parse.unquote(selected_text).replace(' ', '%20') if selected_text.startswith('http') else
-						  selected_text+' ' + datetime.datetime.fromtimestamp(int(selected_text)).strftime("%Y.%m.%d %H:%M:%S") if selected_text.isdigit() and 5<=len(selected_text)<=10 else
+						  selected_text+' ' + datetime.datetime.fromtimestamp(int(selected_text)).strftime("%Y.%m.%d %H:%M:%S") if selected_text.isdigit() and 5<=len(selected_text)<=10 else
 	#					  selected_text+' ' + str(ord(selected_text)) + '=' + hex(ord(selected_text)) if len(selected_text) == 1 else
 	#					  selected_text+' ' + chr(int(selected_text, 16)) if 2 <= len(selected_text) <= 5 else
 					#	  selected_text.replace('А','A').replace('В','B').replace('С','C').replace('Д','D').replace('Е','E').replace('Ф','F').replace(' ', '').replace("\n", '') if re.match(R"[0-9АВСДЕФ \n]+$", selected_text) else
@@ -484,7 +476,7 @@ class f1_command(sublime_plugin.TextCommand):
 					cu_str = self.view.substr(sublime.Region(cu_brackets.begin(), cu_brackets.end()))
 					r = re.match(R"^\((?:(\d+)±[?ХXхx]|[хxХX?]±(\d+))\)$", cu_str)
 					if r:
-						view().show_popup(datetime.datetime.fromtimestamp(int(r.group(1) or r.group(2))).strftime("%Y.%m.%d %H:%M:%S"))
+						view().show_popup(datetime.datetime.fromtimestamp(int(r.group(1) or r.group(2))).strftime("%Y.%m.%d %H:%M:%S"))
 						return
 				#(‘’)’'
 
@@ -535,14 +527,30 @@ class f1_command(sublime_plugin.TextCommand):
 					else:
 						pq_text = view().substr(sublime.Region(find_line_with_date(-1).end(), find_line_with_date(1).begin())).rstrip("\n")
 
-				fname = os.getenv('TEMP') + r'\pq_to_html'
-				with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
-					f.write(pq_text)
-			#	if exec_command(r'pythonw C:\!GIT-HUB\adamaveli.name\tools\pq.txt2html.py "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
-				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
-					webbrowser.open(fname + '.html')
-				else:
-					sublime.message_dialog('ERROR (see console for details)')
+				try:
+					from importlib.machinery import SourceFileLoader # https://stackoverflow.com/a/67692/2692494 <- google:‘python import py file as different module name’
+					pqmarkup = SourceFileLoader("pqmarkup", R"C:\!!BITBUCKET\pqmarkup\pqmarkup.py").load_module()
+					pq_html = pqmarkup.to_html(pq_text, ohd = 1)
+
+					fname = os.getenv('TEMP') + r'\pq_to_html'
+					#with open(fname + '.html', 'w', encoding = 'utf-8') as f:
+					#	f.write(pq_html)
+					#webbrowser.open(fname + '.html')
+
+					with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
+						f.write(pq_text)
+				#	if exec_command(r'pythonw C:\!GIT-HUB\adamaveli.name\tools\pq.txt2html.py "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
+					if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
+						webbrowser.open(fname + '.html')
+					else:
+						sublime.message_dialog('ERROR (see console for details)')
+				except pqmarkup.Exception as e:
+					start = find_line_with_date(-1).end() + e.pos
+					r = sublime.Region(start, start+1)
+					view().sel().clear()
+					view().sel().add(r)
+					view().show(r)
+					sublime.message_dialog(e.message)
 			def pq_remove_comments_and_copy_to_clipboard():
 				#sublime.set_clipboard(re.sub(R'\[\[\[(.*?)]]]', '', selected_text))
 				nonlocal selected_text
@@ -711,13 +719,14 @@ class f1_command(sublime_plugin.TextCommand):
 					('Оставить выделенными все гласные буквы',           lambda: remain_in_selection_this_characters("АЕЁИОУЮЭЮЯ")),
 					('Оставить выделенными все согласные буквы',         lambda: remain_in_selection_this_characters("СТПКХЧШЩЦФМНГЛВРЗБЙЖДЬЪ")),
 					('Reverse order of selected text \ Обратить порядок букв в выделенном тексте', reverse_order),
-					('split_selection_into_characters \ Разбить выделение на символы', split_selection_into_characters),
+					('split_selection_into_characters \ [Разбить/]разделить выделение на символы', split_selection_into_characters),
 					('Beautify table \ Сделать таблицу красивой', beautify_table),
 					('Count total cost/expenses \ Подсчитать сумму расходов', count_total_expenses),
 					('Balance all paired spec symbols/characters ‘’(){}[]', balance_all_char_pairs),
 					('Remove all balanced pairs of spec symbols ‘’(){}[]', self.remove_all_balanced_chars_pairs),
 					('Commit\‘Отправить [коммит]’ current\текущий file\файл', commit_current_file),
 					('Edit selection in separate tab/buffer \ Редактировать/‘хочу работать’ с текущим выделением в отдельной вкладке', self.edit_selection_in_separate_buffer),
+					('‘Убрать/скрыть курсор’\‘Hide cursor’', self.hide_cursor),
 				]
 			# Условные\Conditional actions
 			clipbrd = sublime.get_clipboard()
@@ -843,6 +852,7 @@ class sha3_ctrl_shift_i(sublime_plugin.TextCommand):
 date_time_formats = []
 # Prepare date_time_formats
 for format in ['%Y.%m.%d, %H:%M:%S',   # 2016.05.22, 10:22:47 — My previous standard timestamp by pressing F5 in SublimeText
+			   '%Y.%m.%d %H:%M:%S',    # 2017.11.11 22:17:02 — My actual standard timestamp by pressing F5 in SublimeText
 			   '%Y.%m.%d %H:%M:%S',    # 2016.05.22 10:22:47 — My [previous/]actual standard timestamp by pressing F5 in SublimeText
 			   '%Y.%m.%d %H:%M',       # 2016.05.22 10:22 - old
 			   '%H:%M %d.%m.%Y',       # 8:23 10.05.2016 — Notepad.exe on Windows
