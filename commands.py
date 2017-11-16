@@ -58,21 +58,21 @@ def exec_command(cmd):
 def khrono_log_ready():
 	khlog_view = sublime.active_window().find_open_file("B:\\х.лог.txt")
 	if khlog_view:
-		sublime.active_window().focus_view(khlog_view) # ре:переключи[_вид_на]_файл(‘B:\х.лог.txt’) или ре:покажи_файл(‘B:\х.лог.txt’)
+		sublime.active_window().focus_view(khlog_view) # ред:переключи[_вид_на]_файл(‘B:\х.лог.txt’) или ред:покажи_файл(‘B:\х.лог.txt’)
 		if khlog_view.is_dirty():
 			sublime.error_message("Пожалуйста, приведите файл в порядок!\n(К состоянию/виду `х`)!")
 			return None
 	else:
-		khlog_view = sublime.active_window().open_file("B:\\х.лог.txt")#(#, sublime.TRANSIENT) # ре:открой(‘B:\х.лог.txt’)
+		khlog_view = sublime.active_window().open_file("B:\\х.лог.txt")#(#, sublime.TRANSIENT) # ред:открой(‘B:\х.лог.txt’)
 	return khlog_view
 
 def khrono_log(text):
 	khlog_view = khrono_log_ready()
 	assert(khlog_view)
 	khlog_view.sel().clear()
-	khlog_view.sel().add(sublime.Region(khlog_view.size(), khlog_view.size())) # khlog_view.caret_pos = О-0 \ ре:кур[со]р = О-0 \\ ре:курры для много-курсорного редактирования
-	if khlog_view.substr(sublime.Region(khlog_view.size()-1, khlog_view.size())) != "\n": # khlog_view.str[О-1] # ре:текст[О-1]
-		khlog_view.run_command("append", { "characters": "\n" } ) # ре:вставь("\н")
+	khlog_view.sel().add(sublime.Region(khlog_view.size(), khlog_view.size())) # khlog_view.caret_pos = @-0 \ ред:каретка = @-0 \\ ред:каретки для много-курсорного редактирования
+	if khlog_view.substr(sublime.Region(khlog_view.size()-1, khlog_view.size())) != "\n": # khlog_view.str[@-1] # ред:текст[@-1]
+		khlog_view.run_command("append", { "characters": "\n" } ) # ред:вставь("\н")
 	khlog_view.run_command("append", { "characters": "\n" } )
 	khlog_view.run_command("add_date_time")
 	khlog_view.run_command("append", { "characters": "\n" + text } )
