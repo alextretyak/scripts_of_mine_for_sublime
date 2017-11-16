@@ -123,9 +123,9 @@ def box_drawing(text, box_drawing_chars = box_drawing_chars_DEFAULT):
 ●─● ●─● ●─x ●─● ●─● ●─● ●─● ●─●
  ●●  x   xx  x  x●● ●●x  ●  ●●●
 
-xx  ●●● ●xx ---
-x┌● x┌● ●┌● -┌+
-x●  x●x ●●x ++-
+xx  ●●● ●xx --- +--
+x┌● x┌● ●┌● -┌+ +┌+
+x●  x●x ●●x ++- -+-
 
  ●   ●x
 х├● х├●
@@ -264,7 +264,7 @@ B   │   L
 U ──┼── L
  T  │  E 
 """)
-sassert(box_drawing("""
+'''sassert(box_drawing("""
  │
 ***─────┬──────────────────────────────┐""" # раньше было `???` вместо `***`
 """
@@ -274,7 +274,7 @@ sassert(box_drawing("""
 ┌┴┬─────┬──────────────────────────────┐
 │$│СЛОВО│ПОЧЕМУ ЗАПРЕЩЕНО              │
 """
-)
+)'''
 check_box_drawing( # раньше было два `?`
 """
 1⣀3──ЭТО──┐ИЛИ┌┐1
@@ -347,6 +347,26 @@ check_box_drawing("""
    ├─ РАЗРЫВ
 ───┘
 """)
+check_box_drawing( # {[
+"""
+┌─────┐ ┌─────────┐
+│ }   │ │         │
+│ ] Ъ │ │         │
+└─────┘ └─┐ ENTER │
+  ┌─────┐ │       │
+  │ | / │ │       │
+  │ \   │ │       │
+  └─────┘ └───────┘
+""")
+'''check_box_drawing("""
+        │ Enter◄-/      │
+        │               │
+        └───────────────┘
+   ┌────────────┐ ┌─────┐
+   │ △ Shift    │ │ |   │
+   │            │ │ \   │
+   └────────────┘ └─────┘
+""")'''
 
 temp_edit_view = None
 class OnPreCloseListener(sublime_plugin.EventListener):
@@ -1501,3 +1521,9 @@ class punto_switcher_emulator_command(sublime_plugin.TextCommand):
 			newtext += TO[i] if i != -1 else c
 
 		self.view.replace(edit, self.view.sel()[0], newtext)
+
+class OnLoad(sublime_plugin.EventListener):
+	def on_load(self, view):
+		#assert(view.name() == os.path.basename(view.file_name())) [-assert(v.path_name.file_name == v.file_name)-]
+		if view.file_name().endswith(".txt") and os.path.basename(view.file_name()) in os.listdir(dropbox_dir()):
+			view.run_command("set_file_type", {"syntax": "Packages/pqmarkup/pq.sublime-syntax"})

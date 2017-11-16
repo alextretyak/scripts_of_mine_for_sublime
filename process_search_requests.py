@@ -20,7 +20,7 @@ MessageBox = ctypes.windll.user32.MessageBoxW # https://stackoverflow.com/a/4485
 fname = sys.argv[3]
 if not os.path.isfile(fname):
 	try:
-		r = requests.get(("https://www.google.ru/search?q=" if sys.argv[1] == "GOOGLE" else
+		r = requests.get(("https://www.google.ru/search?num=20&q=" if sys.argv[1] == "GOOGLE" else
 		                  "https://yandex.ru/search/?text=") + urllib.parse.quote_plus(sys.argv[2]),
 		headers={'user-agent': 'Mozilla/5.0'+0*' (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'} if sys.argv[1] == "GOOGLE" else # при user-agent по умолчанию (python-requests/2.10.0) почему-то возвращается страница в кодировке cp1251 (зато размер 50Кб, а так 86Кб {но с ...Chrome... user-agent вообще 293Кб})
 			{'User-Agent': 'Opera/9.80 (Windows NT 6.2; WOW64) Presto/2.12.388 Version/12.16',

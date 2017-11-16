@@ -20,7 +20,7 @@
 	{ "command": /*БЫЛО "soft_undo" СТАЛО*/ "lower_case" , "keys": ["ctrl+j"] },
 	{ "command":        "soft_undo"                      , "keys": [ "alt+z"] },
 	{ "command":        "soft_redo"                      , "keys": [ "alt+y"] },
-	{ "keys": ["-", "-"], "command": "insert_snippet", "args": {"contents": "—"} },
+	//{ "keys": ["-", "-"], "command": "insert_snippet", "args": {"contents": "—"} },
 //	{ "keys": [":", ")"], "command": "insert_snippet", "args": {"contents": "☺☻"} },
 //	{ "keys": [":", "("], "command": "insert_snippet", "args": {"contents": "☻☺"} },
 	{ "keys": [":",      "("], "command": "insert_snippet", "args": {"contents":  ":():" } },
@@ -33,20 +33,21 @@
 	{ "keys": ["super+`"], "command": "insert_pq" },
 	//{ "keys": ["alt+`"], "command": "insert_pq" },
 
-    { "keys": [     "alt+`"], "command": "pq_format_char", "args": {"char": "~"} }, // для русской раскладки
-    { "keys": ["ctrl+alt+`"], "command": "pq_format_char", "args": {"char": "~"} }, // для русской раскладки
-    //(почему ~, а не ` — обычно код всё равно на английском и для ввода символа ` допустимо переключать раскладку)
-
-    { "keys": [     "alt+3"], "command": "pq_format_char", "args": {"char": "#"} }, // для русской раскладки
-    { "keys": ["ctrl+alt+3"], "command": "pq_format_char", "args": {"char": "#"} }, // для русской раскладки
-    { "keys": [     "alt+2"], "command": "insert", "args": {"characters": "@"} }, // для русской раскладки
-    { "keys": ["ctrl+alt+2"], "command": "insert", "args": {"characters": "@"} }, // для русской раскладки
-    { "keys": [     "alt+4"], "command": "insert", "args": {"characters": "$"} }, // для русской раскладки
-    { "keys": ["ctrl+alt+4"], "command": "insert", "args": {"characters": "$"} }, // для русской раскладки
-    { "keys": [     "alt+6"], "command": "insert", "args": {"characters": "^"} }, // для русской раскладки
-    { "keys": ["ctrl+alt+6"], "command": "insert", "args": {"characters": "^"} }, // для русской раскладки
-    { "keys": [     "alt+7"], "command": "insert", "args": {"characters": "&"} }, // для русской раскладки
-    { "keys": ["ctrl+alt+7"], "command": "insert", "args": {"characters": "&"} }, // для русской раскладки
+    // { "keys": [   "shift+2"], "command": "insert", "args": {"characters": "@"} },
+    // { "keys": [     "alt+2"], "command": "insert", "args": {"characters": "\""} },
+    // { "keys": ["ctrl+alt+2"], "command": "insert", "args": {"characters": "\""} },
+    // { "keys": [   "shift+3"], "command": "pq_format_char", "args": {"char": "#"} },
+    // { "keys": [     "alt+3"], "command": "insert", "args": {"characters": "№"} },
+    // { "keys": ["ctrl+alt+3"], "command": "insert", "args": {"characters": "№"} },
+    // { "keys": [   "shift+4"], "command": "insert", "args": {"characters": "$"} },
+    // { "keys": [     "alt+4"], "command": "insert", "args": {"characters": ";"} },
+    // { "keys": ["ctrl+alt+4"], "command": "insert", "args": {"characters": ";"} },
+    // { "keys": [   "shift+6"], "command": "insert", "args": {"characters": "^"} },
+    // { "keys": [     "alt+6"], "command": "insert", "args": {"characters": ":"} },
+    // { "keys": ["ctrl+alt+6"], "command": "insert", "args": {"characters": ":"} },
+    // { "keys": [   "shift+7"], "command": "insert", "args": {"characters": "&"} },
+    // { "keys": [     "alt+7"], "command": "insert", "args": {"characters": "?"} },
+    // { "keys": ["ctrl+alt+7"], "command": "insert", "args": {"characters": "?"} },
 
 	//{ "keys": ["‘"], "command": "insert_pq" }, // ’ (for balance)
 //	{ "keys": ["alt+9"], "command": "insert_pq" }, // ‘ (for balance)
@@ -56,11 +57,11 @@
 	{ "keys": ["ctrl+shift+2"], "command": "insert_snippet", "args": {"contents": "“${0:$SELECTION}”"} },
 	{ "keys": ["super+shift+`"], "command": "insert_snippet", "args": {"contents": "’${0:$SELECTION}‘"} },
 	//{ "keys": ["alt+shift+`"], "command": "insert_snippet", "args": {"contents": "’${0:$SELECTION}‘"} },
-	{ "keys": ["alt+shift+`"], "command": "insert", "args": {"characters": "`"} },
+	//{ "keys": ["alt+shift+`"], "command": "insert", "args": {"characters": "`"} },
 	{ "keys": ["ctrl+["], "command": "insert_snippet", "args": {"contents": "[${0:$SELECTION}]"} },
 	{ "keys": ["ctrl+]"], "command": "insert_snippet", "args": {"contents":  "${SELECTION}]$0"} },
-	{ "keys": ["ctrl+,"], "command": "insert_snippet", "args": {"contents": "<"} },
-	{ "keys": ["ctrl+."], "command": "insert_snippet", "args": {"contents": ">"} },
+	//{ "keys": ["ctrl+,"], "command": "insert_snippet", "args": {"contents": "<"} },
+	//{ "keys": ["ctrl+."], "command": "insert_snippet", "args": {"contents": ">"} },
 	{ "keys": ["ctrl+'"], "command": "insert_snippet", "args": {"contents": "'"} },
 	{ "keys": ["ctrl+;"], "command": "insert_snippet", "args": {"contents": ":"} },
 	{ "keys": ["ctrl+shift+;"], "command": "insert_snippet", "args": {"contents": ";"} },
@@ -104,7 +105,7 @@
 	{ "keys": ["ctrl+t"],  "command": "unbound" },
 	{ "keys": ["alt+1"], "command": "noop" },
 	//{ "keys": ["alt+2"], "command": "unbound" },
-	{ "keys": ["alt+3"], "command": "unbound" },
+	//{ "keys": ["alt+3"], "command": "unbound" },
 	//{ "keys": ["alt+4"], "command": "unbound" },
 	{ "keys": ["alt+5"], "command": "unbound" },
 	//{ "keys": ["alt+6"], "command": "unbound" },
