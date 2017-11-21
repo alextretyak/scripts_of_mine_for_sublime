@@ -541,9 +541,11 @@ class f1_command(sublime_plugin.TextCommand):
 					sublime.message_dialog('ERROR (see console for details)')
 			def pq_to_html():
 				pq_text = selected_text
+				whole_file = False
 				if pq_text == "": # находим всю запись в том месте, где стоит курсор
 					if view().file_name() and view().file_name().endswith('.pq'): # в файлах .pq всегда берём весь текст (дневники будут в формате .txt или .pq.txt)
 						pq_text = view().substr(sublime.Region(0, view().size()))
+						whole_file = True
 					else:
 						pq_text = view().substr(sublime.Region(find_line_with_date(-1).end(), find_line_with_date(1).begin())).rstrip("\n")
 
@@ -559,11 +561,22 @@ class f1_command(sublime_plugin.TextCommand):
 
 					with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
 						f.write(pq_text)
-				#	if exec_command(r'pythonw C:\!GIT-HUB\adamaveli.name\tools\pq.txt2html.py "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
-					if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
-						webbrowser.open(fname + '.html')
+					if (whole_file # чтобы работали относительные ссылки на картинки и на другие страницы статических сайтов (пример статического сайта: [https://github.com/pqmarkup/pqmarkup.github.io])
+					        and (os.path.isdir(os.path.splitext(view().file_name())[0]) # такая "залепская" проверка для файлов, которым не требуется создавать index.html, например: B:\Статьи\pq.pq\pq.pq
+					          or os.path.basename(view().file_name()) == ".pq")): # для файлов `.pq` (например файл `.pq` в [https://github.com/pqmarkup/pqmarkup.github.io]) проверка в предыдущей строке не работает, поэтому учитываем их специально
+						html_fname = view().file_name()
+						if html_fname.endswith(".pq"):
+							html_fname = html_fname[:-3]
+						# if html_fname.endswith("/"): html_fname = html_fname[:-1] # это необязательно
+						html_fname += "/index.html"
+						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document "' + fname + '.pq.txt" -f "' + html_fname + '"') == 0: # файл может быть не сохранён, поэтому используем `fname`, а не `view().file_name()`
+							webbrowser.open(html_fname)
 					else:
-						sublime.message_dialog('ERROR (see console for details)')
+					#	if exec_command(r'pythonw C:\!GIT-HUB\adamaveli.name\tools\pq.txt2html.py "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
+						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
+							webbrowser.open(fname + '.html')
+						else:
+							sublime.message_dialog('ERROR (see console for details)')
 				except pqmarkup.Exception as e:
 					start = find_line_with_date(-1).end() + e.pos
 					r = sublime.Region(start, start+1)
@@ -613,6 +626,12 @@ class f1_command(sublime_plugin.TextCommand):
 					r = sublime.Region(e.start, e.end)
 					view().sel().add(r)
 					view().show_at_center(r)
+
+			def find_differences_between_encodings():
+				for i in range(256):
+					codecs.decode()
+					# chr(i).encode('latin-1')
+					# chr(i).encode('ascii')
 
 			def reverse_order():
 				replace_selection_with("".join(reversed(selected_text)))
@@ -734,6 +753,7 @@ class f1_command(sublime_plugin.TextCommand):
 					(box_drawing_chars_1, lambda: box_drawing_chars(box_drawing_chars_1)),
 					(box_drawing_chars_2, lambda: box_drawing_chars(box_drawing_chars_2)),
 					('Найти символ не представимый в кодировке cp1251', find_first_non1251_char),
+					('Сравнить и показать, чем отличаются кодировки latin-1 и ascii', find_differences_between_encodings),
 					('Оставить выделенными все глухие согласные буквы',  lambda: remain_in_selection_this_characters("СТПКХЧШЩЦФ")),
 					('Оставить выделенными все звонкие согласные буквы', lambda: remain_in_selection_this_characters("МНГЛВРЗБЙЖД")),
 					('Оставить выделенными все гласные буквы',           lambda: remain_in_selection_this_characters("АЕЁИОУЮЭЮЯ")),
