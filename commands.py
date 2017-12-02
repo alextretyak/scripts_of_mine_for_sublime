@@ -1365,9 +1365,14 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 	def run(self, edit):
 		def open_dropbox_file_and_go_to_text(file_name, text, region = None):
 			global target_view, target_text, target_region
-			fname = os.path.dirname(self.view.file_name() if self.view.file_name() else dropbox_dir()) +"/"+ file_name
-			if not os.path.isfile(fname):
-				fname = R"C:\cloud.mail.ru" + "\\" + file_name # OR "C:\\cloud.mail.ru\\" OR ‘C:\cloud.mail.ru\’
+			fname = None
+			for dir in ([os.path.dirname(self.view.file_name())] if self.view.file_name() else []) + [os.path.dirname(dropbox_dir()), R"C:\cloud.mail.ru"]: # try dirs
+				if os.path.isfile(dir +"/"+ file_name):
+					fname = dir +"/"+ file_name
+					break
+			if fname == None:
+				sublime.error_message('File '+file_name+' not found')
+				return
 			target_view = sublime.active_window().open_file(fname) # self.view.file_name() == None для файла ДЕЛА [ну а также для только что созданных несохранённых файлов]
 			target_text = text
 			target_region = region
