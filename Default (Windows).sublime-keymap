@@ -139,4 +139,6 @@
 
 	{ "keys": ["left"], "command": "left_right", "args": {"dir": -1 } },
 	{ "keys": ["right"], "command": "left_right", "args": {"dir": 1 } },
+	{ "keys": ["shift+left"], "command": "left_right", "args": {"dir": -1, "shift_pressed": true } },
+	{ "keys": ["shift+right"], "command": "left_right", "args": {"dir": 1, "shift_pressed": true } },
 ]

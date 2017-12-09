@@ -1555,17 +1555,17 @@ class OnLoad(sublime_plugin.EventListener):
 
 
 class left_right_command(sublime_plugin.TextCommand): # чтобы гулять клавишами влево/вправо по пробельным отступам было также удобно, как и по табулированным отступам
-	def run(self, edit, dir):
+	def run(self, edit, dir, shift_pressed = False):
 		view = self.view
 		for sel in view.sel():
 			view.sel().subtract(sel)
-			if sel.size() != 0:
+			if sel.size() != 0 and not shift_pressed:
 				p = sel.begin() if dir < 0 else sel.end()
 				view.sel().add(sublime.Region(p, p))
 			else:
 				line = view.line(sel)
-				new_pos = sel.a - line.a + dir
-				indent_size = re.search('[^ ]', view.substr(line) + ".").start() # `+ "."` needed for empty lines
+				new_pos = sel.b - line.a + dir
+				indent_size = re.search('[^ ]', view.substr(line) + ".").start() # `+ "."` needed for empty lines [-A indent_size = line. {.find_not_of(‘ ’) ?: .len} \\= line.find_not_of@(‘ ’)-]
 				if 0 <= new_pos < indent_size:
 					tab_size = view.settings().get("tab_size")
 					if dir > 0:
@@ -1576,4 +1576,4 @@ class left_right_command(sublime_plugin.TextCommand): # чтобы гулять 
 					else:
 						new_pos -= new_pos % tab_size
 				new_pos += line.a
-				view.sel().add(sublime.Region(new_pos, new_pos))
+				view.sel().add(sublime.Region(sel.a if shift_pressed else new_pos, new_pos))
