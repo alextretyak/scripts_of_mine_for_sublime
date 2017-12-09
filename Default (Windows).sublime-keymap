@@ -136,4 +136,7 @@
 	{ "keys": ["ctrl+shift+down"], "command": "-" },
 
 	{ "keys": ["'"], "command": "insert", "args": {"characters": "'" } },
+
+	{ "keys": ["left"], "command": "left_right", "args": {"dir": -1 } },
+	{ "keys": ["right"], "command": "left_right", "args": {"dir": 1 } },
 ]

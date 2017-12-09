@@ -1552,3 +1552,28 @@ class OnLoad(sublime_plugin.EventListener):
 		#assert(view.name() == os.path.basename(view.file_name())) [-assert(v.path_name.file_name == v.file_name)-]
 		if view.file_name().endswith(".txt") and os.path.basename(view.file_name()) in os.listdir(dropbox_dir()):
 			view.run_command("set_file_type", {"syntax": "Packages/pqmarkup/pq.sublime-syntax"})
+
+
+class left_right_command(sublime_plugin.TextCommand): # чтобы гулять клавишами влево/вправо по пробельным отступам было также удобно, как и по табулированным отступам
+	def run(self, edit, dir):
+		view = self.view
+		for sel in view.sel():
+			view.sel().subtract(sel)
+			if sel.size() != 0:
+				p = sel.begin() if dir < 0 else sel.end()
+				view.sel().add(sublime.Region(p, p))
+			else:
+				line = view.line(sel)
+				new_pos = sel.a - line.a + dir
+				indent_size = re.search('[^ ]', view.substr(line) + ".").start() # `+ "."` needed for empty lines
+				if 0 <= new_pos < indent_size:
+					tab_size = view.settings().get("tab_size")
+					if dir > 0:
+						new_pos -= dir
+						new_pos -= new_pos % tab_size
+						new_pos += tab_size
+						if new_pos > indent_size: new_pos = indent_size # когда код выровнен неаккуратно, например: `   j = 1` при размере табуляции = 4
+					else:
+						new_pos -= new_pos % tab_size
+				new_pos += line.a
+				view.sel().add(sublime.Region(new_pos, new_pos))
