@@ -139,6 +139,9 @@
 
 	{ "keys": ["left"], "command": "left_right", "args": {"dir": -1 } },
 	{ "keys": ["right"], "command": "left_right", "args": {"dir": 1 } },
-	{ "keys": ["shift+left"], "command": "left_right", "args": {"dir": -1, "shift_pressed": true } },
-	{ "keys": ["shift+right"], "command": "left_right", "args": {"dir": 1, "shift_pressed": true } },
+	{ "keys": ["shift+left" ], "command": "left_right", "args": {"dir": -1, "shift_pressed": true } },
+	{ "keys": ["shift+right"], "command": "left_right", "args": {"dir":  1, "shift_pressed": true } },
+
+	{ "keys": ["ctrl+alt+shift+up"  ], "command": "extend_cursor_up_or_down", "args": {"down": false} },
+	{ "keys": ["ctrl+alt+shift+down"], "command": "extend_cursor_up_or_down", "args": {"down": true } },
 ]

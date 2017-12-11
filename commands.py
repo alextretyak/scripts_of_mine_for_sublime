@@ -1561,7 +1561,7 @@ class left_right_command(sublime_plugin.TextCommand): # чтобы гулять 
 			view.sel().subtract(sel)
 			if sel.size() != 0 and not shift_pressed:
 				p = sel.begin() if dir < 0 else sel.end()
-				view.sel().add(sublime.Region(p, p))
+				view.sel().add(sublime.Region(p))
 			else:
 				line = view.line(sel)
 				new_pos = sel.b - line.a + dir
@@ -1577,3 +1577,16 @@ class left_right_command(sublime_plugin.TextCommand): # чтобы гулять 
 						new_pos -= new_pos % tab_size
 				new_pos += line.a
 				view.sel().add(sublime.Region(sel.a if shift_pressed else new_pos, new_pos))
+
+class extend_cursor_up_or_down(sublime_plugin.TextCommand): # чтобы расширять курсор клавишами Ctrl+Alt+Shift+Вверх/Вниз для создания дополнительной колонки [комментариев или колонки в текстовой таблице]
+	def run(self, edit, down):
+		view = self.view
+		for sel in reversed(view.sel()):
+			line = view.full_line(sel)
+			if line.begin() == 0 and not down: # это первая строка и вверх расширять курсор уже некуда
+				continue
+			nline = view.line(line.end()+1 if down else line.begin()-1) # view.line() странно себя ведёт, когда позиция выходит за предел, но такое поведение меня устраивает
+			if nline.size() < sel.b - line.begin():
+				view.insert(edit, nline.end(), ' '*(sel.b - line.begin() - nline.size()))
+			view.sel().add(sublime.Region(nline.begin() + sel.b - line.begin()))
+			# [-TODO: Добавить поддержку символов табуляции.-]
