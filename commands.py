@@ -689,7 +689,7 @@ class f1_command(sublime_plugin.TextCommand):
 				self.view.find_all("(\d+)Р", 0, R"\1", extractions)
 				self.view.show_popup(str(sum([int(e) for e in extractions])))
 
-			def balance_all_char_pairs(): # [-[[[FIX TO ]]]CORRECT https://s.mail.ru/Hyii/M6iAbpmM4-]
+			def check_balance_of_all_char_pairs(): # [-[[[FIX TO ]]]CORRECT https://s.mail.ru/Hyii/M6iAbpmM4-]
 				text = self.view.substr(sublime.Region(0, self.view.size()))
 				class IntException(BaseException):
 					def __init__(self, i):
@@ -762,7 +762,7 @@ class f1_command(sublime_plugin.TextCommand):
 					('split_selection_into_characters \ [Разбить/]разделить выделение на символы', split_selection_into_characters),
 					('Beautify table \ Сделать таблицу красивой', beautify_table),
 					('Count total cost/expenses \ Подсчитать сумму расходов', count_total_expenses),
-					('Balance all paired spec symbols/characters ‘’(){}[]', balance_all_char_pairs),
+					('Balance check of all paired spec symbols/characters ‘’(){}[]', check_balance_of_all_char_pairs),
 					('Remove all balanced pairs of spec symbols ‘’(){}[]', self.remove_all_balanced_chars_pairs),
 					('Commit\‘Отправить [коммит]’ current\текущий file\файл', commit_current_file),
 					('Edit selection in separate tab/buffer \ Редактировать/‘хочу работать’ с текущим выделением в отдельной вкладке', self.edit_selection_in_separate_buffer),
@@ -1509,43 +1509,44 @@ class cut_copy_one_listener(sublime_plugin.EventListener):
 
 class punto_switcher_emulator_command(sublime_plugin.TextCommand):
 	def run(self, edit):
-		selected_text = self.view.substr(self.view.sel()[0])
+		for sel in self.view.sel():
+			selected_text = self.view.substr(sel)
 
-		if len(selected_text) == 0: # red:selection.empty \\ ред:выделение.пусто
-			return
+			if len(selected_text) == 0: # red:selection.empty \\ ред:выделение.пусто
+				return
 
-	   #\/ — эта версия разрушает ("вyfxfkt" после двойного нажатия Shift+Pause/Break не возвращается само в себя)
-	   #OT = ("""qwertyuiop[]asdfghjkl;'\zxcvbnm,./№"""
-	   #      """QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?@#$%^&""")
-	   #TO = ("""йцукенгшщзхъфывапролджэ\ячсмитьбю.#"""
-	   #      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,"№;%:?""")
-	   #napravlinie_vybrano = False
-	   #
-	   #newtext = ""
-	   #for c in selected_text:
-	   #	if not napravlinie_vybrano:
-	   #		if OT.find(c) != -1:
-	   #			napravlinie_vybrano = True
-	   #		elif TO.find(c) != -1:
-	   #			OT, TO = TO, OT
-	   #			napravlinie_vybrano = True
-	   #	i = OT.find(c)
-	   #	newtext += TO[i] if i != -1 else c
-	   #/\ — эта версия разрушает ("вyfxfkt" после двойного нажатия Shift+Pause/Break не возвращается само в себя)
-		OT = ("""qwertyuiop[]asdfghjkl;'\zxcvbnm,./№`"""
-		      """QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?@#$%^&"""
-		      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,"№;%:?"""
-		      """йцукенгшщзхъфывапролджэ\ячсмитьбю.#ё""")
-		TO = ("""йцукенгшщзхъфывапролджэ\ячсмитьбю.#ё"""
-		      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,"№;%:?"""
-		      """QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?@#$%^&"""
-		      """qwertyuiop[]asdfghjkl;'\zxcvbnm,./№`""")
-		newtext = ""
-		for c in selected_text:
-			i = OT.find(c)
-			newtext += TO[i] if i != -1 else c
+		   #\/ — эта версия разрушает ("вyfxfkt" после двойного нажатия Shift+Pause/Break не возвращается само в себя)
+		   #OT = ("""qwertyuiop[]asdfghjkl;'\zxcvbnm,./№"""
+		   #      """QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?@#$%^&""")
+		   #TO = ("""йцукенгшщзхъфывапролджэ\ячсмитьбю.#"""
+		   #      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,"№;%:?""")
+		   #napravlinie_vybrano = False
+		   #
+		   #newtext = ""
+		   #for c in selected_text:
+		   #	if not napravlinie_vybrano:
+		   #		if OT.find(c) != -1:
+		   #			napravlinie_vybrano = True
+		   #		elif TO.find(c) != -1:
+		   #			OT, TO = TO, OT
+		   #			napravlinie_vybrano = True
+		   #	i = OT.find(c)
+		   #	newtext += TO[i] if i != -1 else c
+		   #/\ — эта версия разрушает ("вyfxfkt" после двойного нажатия Shift+Pause/Break не возвращается само в себя)
+			OT = ("""qwertyuiop[]asdfghjkl;'\zxcvbnm,./№`"""
+			      """QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?@#$%^&"""
+			      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,"№;%:?"""
+			      """йцукенгшщзхъфывапролджэ\ячсмитьбю.#ё""")
+			TO = ("""йцукенгшщзхъфывапролджэ\ячсмитьбю.#ё"""
+			      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,"№;%:?"""
+			      """QWERTYUIOP{}ASDFGHJKL:"|ZXCVBNM<>?@#$%^&"""
+			      """qwertyuiop[]asdfghjkl;'\zxcvbnm,./№`""")
+			newtext = ""
+			for c in selected_text:
+				i = OT.find(c)
+				newtext += TO[i] if i != -1 else c
 
-		self.view.replace(edit, self.view.sel()[0], newtext)
+			self.view.replace(edit, sel, newtext)
 
 class OnLoad(sublime_plugin.EventListener):
 	def on_load(self, view):
@@ -1577,16 +1578,32 @@ class left_right_command(sublime_plugin.TextCommand): # чтобы гулять 
 						new_pos -= new_pos % tab_size
 				new_pos += line.a
 				view.sel().add(sublime.Region(sel.a if shift_pressed else new_pos, new_pos))
+		#[-Починить супер-отбеливатель-]
+		#[-Починить прокрутку для длинных строк без word wrap-]
 
 class extend_cursor_up_or_down(sublime_plugin.TextCommand): # чтобы расширять курсор клавишами Ctrl+Alt+Shift+Вверх/Вниз для создания дополнительной колонки [комментариев или колонки в текстовой таблице]
 	def run(self, edit, down):
 		view = self.view
 		for sel in reversed(view.sel()):
-			line = view.full_line(sel)
+			line = view.line(sel)
+			print('			line = view.line(sel)')
+			#print('			'+str(line)+' =         '+sel+')')
 			if line.begin() == 0 and not down: # это первая строка и вверх расширять курсор уже некуда
 				continue
 			nline = view.line(line.end()+1 if down else line.begin()-1) # view.line() странно себя ведёт, когда позиция выходит за предел, но такое поведение меня устраивает
+			print('nline'+repr(nline))
+			print('nline.size()'+repr(nline.size()))
 			if nline.size() < sel.b - line.begin():
+#			   ^^^^^5^^^^^^   ^^8^^   ^^^^^7^^^^^^
 				view.insert(edit, nline.end(), ' '*(sel.b - line.begin() - nline.size()))
 			view.sel().add(sublime.Region(nline.begin() + sel.b - line.begin()))
 			# [-TODO: Добавить поддержку символов табуляции.-]
+
+#[-Сделать такой пункт в F1: Debug prints add, который автоматически будет добавлять/убирать отладочные print-ы.-]
+#[-Вместо курсора замены: блокировка размера выделения на 1 символ. Выглядит так: С(-678)‘_’-]
+
+class tab_command(sublime_plugin.TextCommand): # 
+	def run(self, edit):
+		view = self.view
+		for sel in reversed(view.sel()):
+			view.insert(edit, sel.b, "\t" if view.settings().get("translate_tabs_to_spaces") else ' '*view.settings().get("tab_size"))

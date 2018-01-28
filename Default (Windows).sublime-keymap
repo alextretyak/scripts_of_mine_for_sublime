@@ -13,7 +13,8 @@
 	{"keys": ["ctrl+shift+i"], "command": "sha3_ctrl_shift_i" },//ВЫЧИСЛИТЬ ША3 ОТ ВЫДЕЛЕННОЙ СТРОКИ
 	{"keys": ["ctrl+shift+l"], "command": "last_log_ctrl_shift_l" },//Показать Last [Log] (последние сделанные записи), а также список *‘д’ел (кнопка l находится на кнопке д)
 	{"keys": ["ctrl+alt+shift+l"], "command": "split_selection_into_lines" },
-	{"keys": ["f9"], "command": "last_log_ctrl_shift_l" },//Показать Last [Log] (последние сделанные записи)
+//	{"keys": ["f9"], "command": "last_log_ctrl_shift_l" },//Показать Last [Log] (последние сделанные записи)
+    {"keys": ["f9"], "command": " "},
 	{"keys": ["ctrl+alt+shift+f"], "command": "search_in_records_ctrl_alt_shift_f" },//Поиск текста во всех записях и вывод всех записей, содержащих данный/найденный текст
 	{ "keys": ["ctrl+shift+u"], "command": "unbound" },
 	{ "command": /*БЫЛО "soft_redo" СТАЛО*/ "upper_case" , "keys": ["ctrl+u"] },
@@ -144,4 +145,9 @@
 
 	{ "keys": ["ctrl+alt+shift+up"  ], "command": "extend_cursor_up_or_down", "args": {"down": false} },
 	{ "keys": ["ctrl+alt+shift+down"], "command": "extend_cursor_up_or_down", "args": {"down": true } },
+
+	{ "keys": ["f4"], "command": " " }, // почему-то `"command": ""` :(не работает):
+	{ "keys": ["shift+f4"], "command": " " },
+
+	{ "keys": ["tab"], "command": "tab_command" },
 ]
