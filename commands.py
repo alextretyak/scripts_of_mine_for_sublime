@@ -1602,8 +1602,12 @@ class extend_cursor_up_or_down(sublime_plugin.TextCommand): # чтобы рас�
 #[-Сделать такой пункт в F1: Debug prints add, который автоматически будет добавлять/убирать отладочные print-ы.-]
 #[-Вместо курсора замены: блокировка размера выделения на 1 символ. Выглядит так: С(-678)‘_’-]
 
-class tab_command(sublime_plugin.TextCommand): # 
+class tab_command(sublime_plugin.TextCommand): # [-не написал что не так с обычным табом, поэтому пока команда будет отключена-]
 	def run(self, edit):
 		view = self.view
 		for sel in reversed(view.sel()):
 			view.insert(edit, sel.b, "\t" if view.settings().get("translate_tabs_to_spaces") else ' '*view.settings().get("tab_size"))
+
+class new_find_all_under_command(sublime_plugin.TextCommand):
+	def run(self, edit):
+		0

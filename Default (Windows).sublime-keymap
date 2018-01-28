@@ -149,7 +149,7 @@
 	{ "keys": ["f4"], "command": " " }, // почему-то `"command": ""` :(не работает):
 	{ "keys": ["shift+f4"], "command": " " },
 
-	{ "keys": ["tab"], "command": "tab_command" },
+	// { "keys": ["tab"], "command": "tab" },
 
 	{ "keys": ["/"], "command": "toggle_comment", "args": { "block": false } },
 ]
