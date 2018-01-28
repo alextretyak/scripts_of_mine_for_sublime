@@ -1587,7 +1587,7 @@ class extend_cursor_up_or_down(sublime_plugin.TextCommand): # чтобы рас�
 		for sel in reversed(view.sel()):
 			line = view.line(sel)
 			print('			line = view.line(sel)')
-			#print('			'+str(line)+' =         '+sel+')')
+			#print('			'+str(line)+' =         '+sel)
 			if line.begin() == 0 and not down: # это первая строка и вверх расширять курсор уже некуда
 				continue
 			nline = view.line(line.end()+1 if down else line.begin()-1) # view.line() странно себя ведёт, когда позиция выходит за предел, но такое поведение меня устраивает
