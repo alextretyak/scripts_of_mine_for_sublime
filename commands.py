@@ -1610,4 +1610,12 @@ class tab_command(sublime_plugin.TextCommand): # [-не написал что н
 
 class new_find_all_under_command(sublime_plugin.TextCommand):
 	def run(self, edit):
-		0
+		view = self.view
+		if len(view.sel()) > 1:
+			if not all(view.substr(s) == view.substr(view.sel()[0]) for s in view.sel()): # за исключением случая, когда все выделения содержат одинаковый текст — эта проверка для того, чтобы повторное нажатие Alt+F3 не приводило к ошибке
+				return sublime.error_message("There should be only one selection, otherwise text to search may be taken from the first selection [of many selections] which [the first selection] is not visible!")
+		selected_text = view.substr(view.sel()[0])
+		if selected_text == "":
+			return sublime.error_message("Selected text is empty!")
+		view.sel().clear()
+		view.sel().add_all(view.find_all(selected_text, sublime.LITERAL))

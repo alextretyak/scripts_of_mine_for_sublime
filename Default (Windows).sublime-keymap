@@ -152,4 +152,6 @@
 	// { "keys": ["tab"], "command": "tab" },
 
 	{ "keys": ["/"], "command": "toggle_comment", "args": { "block": false } },
+
+	{ "keys": ["alt+f3"], "command": "new_find_all_under" },
 ]
