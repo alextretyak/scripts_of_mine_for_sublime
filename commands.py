@@ -1619,3 +1619,10 @@ class new_find_all_under_command(sublime_plugin.TextCommand):
 			return sublime.error_message("Selected text is empty!")
 		view.sel().clear()
 		view.sel().add_all(view.find_all(selected_text, sublime.LITERAL))
+
+class slash_key_command(sublime_plugin.TextCommand):
+	def run(self, edit):
+		if self.view.sel()[0].size() == 0:
+			self.view.insert(edit, self.view.sel()[0].b, '/')
+		else:
+			self.view.run_command("toggle_comment", { "block": False })
