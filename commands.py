@@ -1580,7 +1580,8 @@ class left_right_command(sublime_plugin.TextCommand): # чтобы гулять 
 						new_pos -= new_pos % tab_size
 				new_pos += line.a
 				view.sel().add(sublime.Region(sel.a if shift_pressed else new_pos, new_pos))
-		#[-Починить прокрутку для длинных строк без word wrap-]
+		if len(view.sel()) == 1:
+			view.show(view.sel()[0])
 
 class extend_cursor_up_or_down(sublime_plugin.TextCommand): # чтобы расширять курсор клавишами Ctrl+Alt+Shift+Вверх/Вниз для создания дополнительной колонки [комментариев или колонки в текстовой таблице]
 	def run(self, edit, down):
