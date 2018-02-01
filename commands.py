@@ -1558,8 +1558,10 @@ class OnLoad(sublime_plugin.EventListener):
 class left_right_command(sublime_plugin.TextCommand): # чтобы гулять клавишами влево/вправо по пробельным отступам было также удобно, как и по табулированным отступам
 	def run(self, edit, dir, shift_pressed = False):
 		view = self.view
-		for sel in view.sel():
-			view.sel().subtract(sel)
+		sels = list(view.sel())
+		view.sel().clear()
+		for sel in sels:
+			# view.sel().subtract(sel)
 			if sel.size() != 0 and not shift_pressed:
 				p = sel.begin() if dir < 0 else sel.end()
 				view.sel().add(sublime.Region(p))
@@ -1578,7 +1580,6 @@ class left_right_command(sublime_plugin.TextCommand): # чтобы гулять 
 						new_pos -= new_pos % tab_size
 				new_pos += line.a
 				view.sel().add(sublime.Region(sel.a if shift_pressed else new_pos, new_pos))
-		#[-Починить супер-отбеливатель-]
 		#[-Починить прокрутку для длинных строк без word wrap-]
 
 class extend_cursor_up_or_down(sublime_plugin.TextCommand): # чтобы расширять курсор клавишами Ctrl+Alt+Shift+Вверх/Вниз для создания дополнительной колонки [комментариев или колонки в текстовой таблице]
