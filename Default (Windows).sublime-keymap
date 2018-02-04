@@ -154,4 +154,7 @@
 	{ "keys": ["/"], "command": "slash_key" }, // key = ["/"], command = "I red:sel.len == 0 {red:insert('/', red:sel)} E red:command('toggle_comment')"
 
 	{ "keys": ["alt+f3"], "command": "new_find_all_under" },
+
+	{ "keys": ["alt+o"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true} },
+	{ "keys": ["ctrl+alt+o"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true} },
 ]
