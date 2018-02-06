@@ -527,19 +527,7 @@ class f1_command(sublime_plugin.TextCommand):
 							self.view.replace(edit, sublime.Region(sq_brackets.b-1, sq_brackets.b), '+')
 							return
 
-			def pq_to_habrahabr_html():
-				pq_text = selected_text
-				if pq_text == "":
-					pq_text = view().substr(sublime.Region(0, view().size()))
-
-				fname = os.getenv('TEMP') + r'\pq_to_html'
-				with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
-					f.write(pq_text)
-				if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --habrahabr-html "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
-					sublime.set_clipboard(open(fname + '.html', encoding = 'utf-8').read())
-				else:
-					sublime.message_dialog('ERROR (see console for details)')
-			def pq_to_html():
+			def pq_to_html(habrahabr_html = False):
 				pq_text = selected_text
 				whole_file = False
 				if pq_text == "": # находим всю запись в том месте, где стоит курсор
@@ -561,6 +549,7 @@ class f1_command(sublime_plugin.TextCommand):
 
 					with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
 						f.write(pq_text)
+					add_cmd_par = '--habrahabr-html' if habrahabr_html else '--output-html-document'
 					if (whole_file # чтобы работали относительные ссылки на картинки и на другие страницы статических сайтов (пример статического сайта: [https://github.com/pqmarkup/pqmarkup.github.io])
 					        and (os.path.isdir(os.path.splitext(view().file_name())[0]) # такая "залепская" проверка для файлов, которым не требуется создавать index.html, например: B:\Статьи\pq.pq\pq.pq
 					          or os.path.basename(view().file_name()) == ".pq")): # для файлов `.pq` (например файл `.pq` в [https://github.com/pqmarkup/pqmarkup.github.io]) проверка в предыдущей строке не работает, поэтому учитываем их специально
@@ -569,12 +558,17 @@ class f1_command(sublime_plugin.TextCommand):
 							html_fname = html_fname[:-3]
 						# if html_fname.endswith("/"): html_fname = html_fname[:-1] # это необязательно
 						html_fname += "/index.html"
-						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document "' + fname + '.pq.txt" -f "' + html_fname + '"') == 0: # файл может быть не сохранён, поэтому используем `fname`, а не `view().file_name()`
-							webbrowser.open(html_fname)
+						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py ' + add_cmd_par + ' "' + fname + '.pq.txt" -f "' + html_fname + '"') == 0: # файл может быть не сохранён, поэтому используем `fname`, а не `view().file_name()`
+							if habrahabr_html:
+								sublime.set_clipboard(open(html_fname, encoding = 'utf-8').read())
+							else:
+								webbrowser.open(html_fname)
 					else:
-					#	if exec_command(r'pythonw C:\!GIT-HUB\adamaveli.name\tools\pq.txt2html.py "' + fname + '.pq.txt" "' + fname + '.html"') == 0:
-						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py --output-html-document "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
-							webbrowser.open(fname + '.html')
+						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py ' + add_cmd_par + ' "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
+							if habrahabr_html:
+								sublime.set_clipboard(open(fname + '.html', encoding = 'utf-8').read())
+							else:
+								webbrowser.open(fname + '.html')
 						else:
 							sublime.message_dialog('ERROR (see console for details)')
 				except pqmarkup.Exception as e:
@@ -744,7 +738,7 @@ class f1_command(sublime_plugin.TextCommand):
 
 			actions = [
 					#('Редактировать секретное сообщение', edit_secret_message),
-					('pqmarkup:to_habrahabr_html', pq_to_habrahabr_html),
+					('pqmarkup:to_habrahabr_html', lambda: pq_to_html(True)),
 					('pqmarkup:to_html', pq_to_html),
 					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
 					('pqmarkup:remove_[[[comments]]]_and_copy_to_clipboard', pq_remove_comments_and_copy_to_clipboard),
