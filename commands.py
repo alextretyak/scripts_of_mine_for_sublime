@@ -738,8 +738,8 @@ class f1_command(sublime_plugin.TextCommand):
 
 			actions = [
 					#('Редактировать секретное сообщение', edit_secret_message),
-					('pqmarkup:to_habrahabr_html', lambda: pq_to_html(True)),
 					('pqmarkup:to_html', pq_to_html),
+					('pqmarkup:to_habrahabr_html', lambda: pq_to_html(True)),
 					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
 					('pqmarkup:remove_[[[comments]]]_and_copy_to_clipboard', pq_remove_comments_and_copy_to_clipboard),
 					('Prev versions', prev_versions),
