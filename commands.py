@@ -50,7 +50,7 @@ def exec_command(cmd):
 	tmpfile = open(tmpfile) #(#, "r+t", encoding = "utf-8")
 	r = subprocess.call(cmd, stdout = tmpfile, stderr = tmpfile)
 	tmpfile.seek(0)
-	print(tmpfile.read())
+	print(tmpfile.read(), end = '')
 	tmpfile.close()
 	os.remove(fname)
 	return r
@@ -798,7 +798,7 @@ class ctrl_f5_command(sublime_plugin.TextCommand):
 				outfile.close()
 				os.remove("out.txt")
 			else:
-				exec_command(r'pythonw "' + self.view.file_name() + '"')
+				exec_command(r'C:\Users\DNS\AppData\Local\Programs\Python\Python36-32\pythonw "' + self.view.file_name() + '"')
 		os.chdir(cwd)
 
 class ctrl_f10_command(sublime_plugin.TextCommand):
@@ -1622,3 +1622,4 @@ class slash_key_command(sublime_plugin.TextCommand):
 			self.view.insert(edit, self.view.sel()[0].b, '/')
 		else:
 			self.view.run_command("toggle_comment", { "block": False })
+#[-Исправить баг: F1 при выделенном символе `<` не работает [показывает маленький квадратик слева внизу от `<`]-]
