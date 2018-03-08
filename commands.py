@@ -540,7 +540,10 @@ class f1_command(sublime_plugin.TextCommand):
 				try:
 					from importlib.machinery import SourceFileLoader # https://stackoverflow.com/a/67692/2692494 <- google:‘python import py file as different module name’
 					pqmarkup = SourceFileLoader("pqmarkup", R"C:\!!BITBUCKET\pqmarkup\pqmarkup.py").load_module()
-					pq_html = pqmarkup.to_html(pq_text, ohd = 1)
+					pq_html = pqmarkup.to_html(pq_text, ohd = 1 if not habrahabr_html else 0, habrahabr_html = habrahabr_html)
+					if habrahabr_html:                 # // dirty kack
+						sublime.set_clipboard(pq_html) # \\ (just left it as is)
+						return
 
 					fname = os.getenv('TEMP') + r'\pq_to_html'
 					#with open(fname + '.html', 'w', encoding = 'utf-8') as f:
