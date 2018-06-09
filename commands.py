@@ -477,7 +477,7 @@ class f1_command(sublime_plugin.TextCommand):
 					   jhjh+=[(self.view.substr(selected_text),selected_text.b)]   #    [+] (|self.view.substr(selected_text), selected_text.b|)) L(selected_text)
 					gdfgh = []                                                     #
 					for selected_text in jhjh:                                     #       [+] selected_text[0]‘<br>’selected_text[0].code.dec‘<br>’selected_text[0].code.hex‘<br>’selected_text[0].code.oct‘<br>’unicodedata:name(selected_text[0], "!EXCEPTION!")
-					   gdfgh += [selected_text[0] + "<br>" + str(ord(selected_text[0])) + "<br>" + hex(ord(selected_text[0])) + "<br>" + oct(ord(selected_text[0])) + "<br>" + unicodedata.name(selected_text[0], "!EXCEPTION!")]
+					   gdfgh += [selected_text[0].replace('<', '&lt;') + "<br>" + str(ord(selected_text[0])) + "<br>" + hex(ord(selected_text[0])) + "<br>" + oct(ord(selected_text[0])) + "<br>" + unicodedata.name(selected_text[0], "!EXCEPTION!")]
 					view().show_popup((3*"<br>").join(gdfgh), max_height=sys.maxsize)
 					return
 				"""	:view.show_popup(
@@ -1625,4 +1625,3 @@ class slash_key_command(sublime_plugin.TextCommand):
 			self.view.insert(edit, self.view.sel()[0].b, '/')
 		else:
 			self.view.run_command("toggle_comment", { "block": False })
-#[-Исправить баг: F1 при выделенном символе `<` не работает [показывает маленький квадратик слева внизу от `<`]-]
