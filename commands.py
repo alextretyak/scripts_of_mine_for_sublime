@@ -45,12 +45,15 @@ def hard_assert(str1, str2):
 	return sassert(str1, str2, True)
 
 import tempfile, webbrowser
-def exec_command(cmd):
+def exec_command(cmd, output = None):
 	tmpfile, fname = tempfile.mkstemp(text=True)
 	tmpfile = open(tmpfile) #(#, "r+t", encoding = "utf-8")
 	r = subprocess.call(cmd, stdout = tmpfile, stderr = tmpfile)
 	tmpfile.seek(0)
-	print(tmpfile.read(), end = '')
+	s = tmpfile.read()
+	print(s, end = '')
+	if output != None:
+		output.append(s)
 	tmpfile.close()
 	os.remove(fname)
 	return r
@@ -537,18 +540,20 @@ class f1_command(sublime_plugin.TextCommand):
 					else:
 						pq_text = view().substr(sublime.Region(find_line_with_date(-1).end(), find_line_with_date(1).begin())).rstrip("\n")
 
-				try:
-					from importlib.machinery import SourceFileLoader # https://stackoverflow.com/a/67692/2692494 <- google:‘python import py file as different module name’
-					pqmarkup = SourceFileLoader("pqmarkup", R"C:\!!BITBUCKET\pqmarkup\pqmarkup.py").load_module()
-					pq_html = pqmarkup.to_html(pq_text, ohd = 1 if not habrahabr_html else 0, habrahabr_html = habrahabr_html)
-					if habrahabr_html:                 # // dirty kack
-						sublime.set_clipboard(pq_html) # \\ (just left it as is)
-						return
+				#try:
+				if True:
+					# from importlib.machinery import SourceFileLoader # https://stackoverflow.com/a/67692/2692494 <- google:‘python import py file as different module name’
+					# pqmarkup = SourceFileLoader("pqmarkup", R"C:\!!BITBUCKET\pqmarkup\pqmarkup.py").load_module() # закомментировал так как встроенный в SublimeText Python 3.3.6 не поддерживает type hints
+					# pq_html = pqmarkup.to_html(pq_text, ohd = 1 if not habrahabr_html else 0, habrahabr_html = habrahabr_html)
+					# if habrahabr_html:                 # // dirty hack
+					#     sublime.set_clipboard(pq_html) # \\ (just left it as is)
+					#     return
 
 					fname = os.getenv('TEMP') + r'\pq_to_html'
 					#with open(fname + '.html', 'w', encoding = 'utf-8') as f:
 					#	f.write(pq_html)
 					#webbrowser.open(fname + '.html')
+					output = []
 
 					with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
 						f.write(pq_text)
@@ -561,26 +566,31 @@ class f1_command(sublime_plugin.TextCommand):
 							html_fname = html_fname[:-3]
 						# if html_fname.endswith("/"): html_fname = html_fname[:-1] # это необязательно
 						html_fname += "/index.html"
-						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py ' + add_cmd_par + ' "' + fname + '.pq.txt" -f "' + html_fname + '"') == 0: # файл может быть не сохранён, поэтому используем `fname`, а не `view().file_name()`
+						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py ' + add_cmd_par + ' "' + fname + '.pq.txt" -f "' + html_fname + '"', output) == 0: # файл может быть не сохранён, поэтому используем `fname`, а не `view().file_name()`
 							if habrahabr_html:
 								sublime.set_clipboard(open(html_fname, encoding = 'utf-8').read())
 							else:
 								webbrowser.open(html_fname)
 					else:
-						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py ' + add_cmd_par + ' "' + fname + '.pq.txt" -f "' + fname + '.html"') == 0:
+						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py ' + add_cmd_par + ' "' + fname + '.pq.txt" -f "' + fname + '.html"', output) == 0:
 							if habrahabr_html:
 								sublime.set_clipboard(open(fname + '.html', encoding = 'utf-8').read())
 							else:
 								webbrowser.open(fname + '.html')
-						else:
-							sublime.message_dialog('ERROR (see console for details)')
-				except pqmarkup.Exception as e:
-					start = find_line_with_date(-1).end() + e.pos
+						#else:
+						#	sublime.message_dialog('ERROR (see console for details)')
+				#except pqmarkup.Exception as e:
+				if len(output) and len(output[0]):
+					rer = re.match(R'(.+) at line (\d+), column (\d+)', output[0])
+					start = (0 if rer.group(2) == '1' else [s.start(0) for s in re.finditer(R'\n', pq_text)][int(rer.group(2)) - 2] + 1) + int(rer.group(3)) - 1
+					message = rer.group(1)
+					if not whole_file:
+						start = find_line_with_date(-1).end() + start
 					r = sublime.Region(start, start+1)
 					view().sel().clear()
 					view().sel().add(r)
 					view().show(r)
-					sublime.message_dialog(e.message)
+					sublime.message_dialog(message)
 			def pq_remove_comments_and_copy_to_clipboard():
 				#sublime.set_clipboard(re.sub(R'\[\[\[(.*?)]]]', '', selected_text))
 				nonlocal selected_text

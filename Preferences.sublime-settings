@@ -18,11 +18,12 @@
 	"dictionary": "Packages/Language - RE/russian_english.dic",
 	"enable_hexadecimal_encoding": false,
 	"fallback_encoding": "Cyrillic (Windows 1251)",
-	"font_face": "Courier New",
+	"font_face": "Fira Code",
 	"font_options":
 	[
-		"no_antialias"
+		//"no_antialias",
 	],
+	"font_size": 10,
 	"ignored_packages":
 	[
 		"Sublimerge Pro",
@@ -36,7 +37,7 @@
 	"show_encoding": true,
 	"show_line_endings": true,
 	"tab_size": 4,
-	"theme": "DefaultT.sublime-theme",
+	"theme": "Default.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"update_check": false
 }
