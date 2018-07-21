@@ -378,7 +378,7 @@ class OnPreCloseListener(sublime_plugin.EventListener):
 		if view == temp_edit_view:
 			temp_edit_view_prev_view.run_command("replace_selection_with", { "characters": view.substr(sublime.Region(0, view.size())) } )
 
-class f1_command(sublime_plugin.TextCommand):
+class f4_command(sublime_plugin.TextCommand):
 	def remove_all_balanced_chars_pairs(self, edit):
 		text = self.view.substr(sublime.Region(0, self.view.size()))
 		# line_end = -1
@@ -786,7 +786,7 @@ class f1_command(sublime_plugin.TextCommand):
 						sublime.active_window().show_input_panel("RENAME", clipbrd[1:-1], on_done, None, None)
 				actions.insert(0, ("FileOps:RENAME", rename))
 
-			sublime.active_window().show_quick_panel([it[0] for it in actions], lambda i: (self.view.run_command("f1", {"redirect_method": actions[i][1].__name__}) if inspect.ismethod(actions[i][1]) else actions[i][1]()) if i != -1 else None)
+			sublime.active_window().show_quick_panel([it[0] for it in actions], lambda i: (self.view.run_command("f4", {"redirect_method": actions[i][1].__name__}) if inspect.ismethod(actions[i][1]) else actions[i][1]()) if i != -1 else None)
 			#self.view.show_popup_menu([it[0] for it in actions], lambda i: actions[i][1]() if i != -1 else None)
 			if result == '':
 				return
@@ -1608,7 +1608,7 @@ class extend_cursor_up_or_down(sublime_plugin.TextCommand): # чтобы рас�
 			view.sel().add(sublime.Region(nline.begin() + sel.b - line.begin()))
 			# [-TODO: Добавить поддержку символов табуляции.-]
 
-#[-Сделать такой пункт в F1: Debug prints add, который автоматически будет добавлять/убирать отладочные print-ы.-]
+#[-Сделать такой пункт в F4: Debug prints add, который автоматически будет добавлять/убирать отладочные print-ы.-]
 #[-Вместо курсора замены: блокировка размера выделения на 1 символ. Выглядит так: С(-678)‘_’-]
 
 class tab_command(sublime_plugin.TextCommand): # [-не написал что не так с обычным табом, поэтому пока команда будет отключена-]

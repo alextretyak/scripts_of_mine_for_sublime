@@ -3,8 +3,8 @@
 	{ "keys": ["ctrl+y"], "command": "redo" },
 	{"keys": ["f5"], "command": "add_date_time" },
 	{"keys": ["shift+f5"], "command": "add_end_date_time" },
-	{"keys": ["f1"], "command": "f1" },
-	{"keys": ["shift+f1"], "command": "f1", "args": {"shift_key_pressed": true} },
+	{"keys": ["f4"], "command": "f4" },
+	{"keys": ["shift+f4"], "command": "f4", "args": {"shift_key_pressed": true} },
 	{"keys": ["f12"], "command": "f12_goto_definition" },
 	{"keys": ["ctrl+f5"], "command": "ctrl_f5" },//ЗАПУСТИТЬ ФАЙЛ file_name() + ".cmd"
 	{"keys": ["ctrl+f10"], "command": "ctrl_f10"/*, "args": {"sel": "${SELECTION}"}*/ }, //ВСТАВИТЬ СИМВОЛ ПО ЕГО HEX-КОДУ или ВСТАВИТЬ КОД выделенного СИМВОЛА
@@ -146,8 +146,8 @@
 	{ "keys": ["ctrl+alt+shift+up"  ], "command": "extend_cursor_up_or_down", "args": {"down": false} },
 	{ "keys": ["ctrl+alt+shift+down"], "command": "extend_cursor_up_or_down", "args": {"down": true } },
 
-	{ "keys": ["f4"], "command": " " }, // почему-то `"command": ""` :(не работает):
-	{ "keys": ["shift+f4"], "command": " " },
+	//{ "keys": ["f4"], "command": " " }, // почему-то `"command": ""` :(не работает):
+	//{ "keys": ["shift+f4"], "command": " " },
 
 	// { "keys": ["tab"], "command": "tab" },
 
