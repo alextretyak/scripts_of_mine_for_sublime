@@ -811,7 +811,7 @@ class ctrl_f5_command(sublime_plugin.TextCommand):
 				outfile.close()
 				os.remove("out.txt")
 			else:
-				exec_command(r'C:\Users\DNS\AppData\Local\Programs\Python\Python36-32\pythonw "' + self.view.file_name() + '"')
+				exec_command('pythonw "' + self.view.file_name() + '"')
 		os.chdir(cwd)
 
 class ctrl_f10_command(sublime_plugin.TextCommand):
