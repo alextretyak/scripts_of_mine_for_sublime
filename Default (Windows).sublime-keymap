@@ -2,7 +2,7 @@
 	//{ "keys": ["ctrl+shift+v"], "command": "paste_from_history" },
 	{ "keys": ["ctrl+y"], "command": "redo" },
 	{"keys": ["f5"], "command": "add_date_time" },
-	{"keys": ["shift+f5"], "command": "add_end_date_time" },
+	//{"keys": ["shift+f5"], "command": "add_end_date_time" },
 	{"keys": ["f4"], "command": "f4" },
 	{"keys": ["shift+f4"], "command": "f4", "args": {"shift_key_pressed": true} },
 	{"keys": ["f12"], "command": "f12_goto_definition" },
