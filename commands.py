@@ -1484,6 +1484,9 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 				#		link = link[:begq-1]#.rstrip(' ')
 				webbrowser.open(link)
 				return
+			if self.view.substr(sublime.Region(sq_brackets.begin()+1, sq_brackets.begin()+2)) == '"': # this is absolute path (which is copied to clipboard in Windows after click on context menu item ‘Копировать как путь’)
+				sublime.active_window().open_file(self.view.substr(sq_brackets)[2:-2])
+				return
 
 """
 		left = right = cursor_pos = self.view.sel()[0].begin()
