@@ -770,6 +770,15 @@ class f4_command(sublime_plugin.TextCommand):
 					os.system('git commit -a --allow-empty-message -m "" & pause')
 					os.system('git push & pause')
 
+			def show_tablets(): # показывает сколько пустых ячеечек в упаковке таблеток Азалептина, который мне прописал психиатр, должно остаться на данный момент [а то я часто забываю, принимал уже таблетку или ещё нет]
+				t = 2 + (datetime.date.today() - datetime.date(2018, 10, 11)).days * 2.5
+				self.view.show_popup('После приёма должно остаться' +
+				               '<br />пустых ячеек:' +
+				               '<br />' +
+				               '<br />Утром:      ' + str( t      % 10).rstrip('0').rstrip('.') +
+				               '<br />В обед:     ' + str((t + 1) % 10).rstrip('0').rstrip('.') +
+				               '<br />Перед сном: ' + str((t + 2) % 10).rstrip('0').rstrip('.'))
+
 			actions = [
 					#('Редактировать секретное сообщение', edit_secret_message),
 					('pqmarkup:to_html', pq_to_html),
@@ -797,6 +806,7 @@ class f4_command(sublime_plugin.TextCommand):
 					('Commit\‘Отправить [коммит]’ current\текущий file\файл', commit_current_file),
 					('Edit selection in separate tab/buffer \ Редактировать/‘хочу работать’ с текущим выделением в отдельной вкладке', self.edit_selection_in_separate_buffer),
 					('‘Убрать/скрыть курсор’\‘Hide cursor’', self.hide_cursor),
+					('Таблетки\Tablets', show_tablets),
 				]
 			# Условные\Conditional actions
 			clipbrd = sublime.get_clipboard()
