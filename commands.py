@@ -530,7 +530,7 @@ class f4_command(sublime_plugin.TextCommand):
 							self.view.replace(edit, sublime.Region(sq_brackets.b-1, sq_brackets.b), '+')
 							return
 
-			def pq_to_html(habrahabr_html = False):
+			def pq_to_html(habr_html = False):
 				pq_text = selected_text
 				whole_file = False
 				if pq_text == "": # находим всю запись в том месте, где стоит курсор
@@ -544,8 +544,8 @@ class f4_command(sublime_plugin.TextCommand):
 				if True:
 					# from importlib.machinery import SourceFileLoader # https://stackoverflow.com/a/67692/2692494 <- google:‘python import py file as different module name’
 					# pqmarkup = SourceFileLoader("pqmarkup", R"C:\!!BITBUCKET\pqmarkup\pqmarkup.py").load_module() # закомментировал так как встроенный в SublimeText Python 3.3.6 не поддерживает type hints
-					# pq_html = pqmarkup.to_html(pq_text, ohd = 1 if not habrahabr_html else 0, habrahabr_html = habrahabr_html)
-					# if habrahabr_html:                 # // dirty hack
+					# pq_html = pqmarkup.to_html(pq_text, ohd = 1 if not habr_html else 0, habr_html = habr_html)
+					# if habr_html:                      # // dirty hack
 					#     sublime.set_clipboard(pq_html) # \\ (just left it as is)
 					#     return
 
@@ -557,7 +557,7 @@ class f4_command(sublime_plugin.TextCommand):
 
 					with open(fname + '.pq.txt', 'w', encoding = 'utf-8') as f:
 						f.write(pq_text)
-					add_cmd_par = '--habrahabr-html' if habrahabr_html else '--output-html-document'
+					add_cmd_par = '--habr-html' if habr_html else '--output-html-document'
 					if (whole_file # чтобы работали относительные ссылки на картинки и на другие страницы статических сайтов (пример статического сайта: [https://github.com/pqmarkup/pqmarkup.github.io])
 					        and (os.path.isdir(os.path.splitext(view().file_name())[0]) # такая "залепская" проверка для файлов, которым не требуется создавать index.html, например: B:\Статьи\pq.pq\pq.pq
 					          or os.path.basename(view().file_name()) == ".pq")): # для файлов `.pq` (например файл `.pq` в [https://github.com/pqmarkup/pqmarkup.github.io]) проверка в предыдущей строке не работает, поэтому учитываем их специально
@@ -567,13 +567,13 @@ class f4_command(sublime_plugin.TextCommand):
 						# if html_fname.endswith("/"): html_fname = html_fname[:-1] # это необязательно
 						html_fname += "/index.html"
 						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py ' + add_cmd_par + ' "' + fname + '.pq.txt" -f "' + html_fname + '"', output) == 0: # файл может быть не сохранён, поэтому используем `fname`, а не `view().file_name()`
-							if habrahabr_html:
+							if habr_html:
 								sublime.set_clipboard(open(html_fname, encoding = 'utf-8').read())
 							else:
 								webbrowser.open(html_fname)
 					else:
 						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py ' + add_cmd_par + ' "' + fname + '.pq.txt" -f "' + fname + '.html"', output) == 0:
-							if habrahabr_html:
+							if habr_html:
 								sublime.set_clipboard(open(fname + '.html', encoding = 'utf-8').read())
 							else:
 								webbrowser.open(fname + '.html')
@@ -782,7 +782,7 @@ class f4_command(sublime_plugin.TextCommand):
 			actions = [
 					#('Редактировать секретное сообщение', edit_secret_message),
 					('pqmarkup:to_html', pq_to_html),
-					('pqmarkup:to_habrahabr_html', lambda: pq_to_html(True)),
+					('pqmarkup:to_habr_html', lambda: pq_to_html(True)),
 					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
 					('pqmarkup:remove_[[[comments]]]_and_copy_to_clipboard', pq_remove_comments_and_copy_to_clipboard),
 					('Highlight Python', lambda: highlight_code('python')),
