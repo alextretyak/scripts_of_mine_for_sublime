@@ -608,26 +608,6 @@ class f4_command(sublime_plugin.TextCommand):
 					selected_text = selected_text[0:i] + selected_text[find_ending_sq_bracket(selected_text, i)+1:]
 				sublime.set_clipboard(selected_text)
 
-			def highlight_code(language):
-				fname = os.getenv('TEMP') + r'\highlight_code'
-				with open(fname, 'w', encoding = 'utf-8') as f:
-					f.write(selected_text)
-
-				os.chdir(R'C:\!!BITBUCKET\!alextretyak\syntax_highlighter')
-				output = []
-				if exec_command(r'pythonw highlight_' + language + '.py "' + fname + '" "' + fname + '.html"', output) == 0:
-					sublime.set_clipboard(open(fname + '.html', encoding = 'utf-8').read())
-				if len(output) and len(output[0]):
-					print(output[0])
-					rer = re.match(R'(.+) at char (\d+)', output[0])
-					message = rer.group(1)
-					pos = int(rer.group(2)) + view().sel()[0].begin()
-					r = sublime.Region(pos, pos+1)
-					view().sel().clear()
-					view().sel().add(r)
-					view().show(r)
-					sublime.message_dialog('Error: ' + message)
-
 			def prev_versions():
 				dir = view().file_name().replace("Dropbox\\", "Dropbox\\.-\\", 1).replace("B:\\", "B:\\.-\\", 1) + '-'
 				os.startfile(os.path.join(dir, os.listdir(dir)[0]))
@@ -785,8 +765,6 @@ class f4_command(sublime_plugin.TextCommand):
 					('pqmarkup:to_habr_html', lambda: pq_to_html(True)),
 					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
 					('pqmarkup:remove_[[[comments]]]_and_copy_to_clipboard', pq_remove_comments_and_copy_to_clipboard),
-					('Highlight Python', lambda: highlight_code('python')),
-					('Highlight 11l', lambda: highlight_code('11l')),
 					('Prev versions', prev_versions),
 					('Файлы этого дня', folder_of_that_day),
 					(box_drawing_chars_1, lambda: box_drawing_chars(box_drawing_chars_1)),
