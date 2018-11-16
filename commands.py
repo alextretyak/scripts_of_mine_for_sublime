@@ -584,7 +584,9 @@ class f4_command(sublime_plugin.TextCommand):
 					rer = re.match(R'(.+) at line (\d+), column (\d+)', output[0])
 					start = (0 if rer.group(2) == '1' else [s.start(0) for s in re.finditer(R'\n', pq_text)][int(rer.group(2)) - 2] + 1) + int(rer.group(3)) - 1
 					message = rer.group(1)
-					if not whole_file:
+					if selected_text != '':
+						start += self.view.sel()[0].begin()
+					elif not whole_file:
 						start = find_line_with_date(-1).end() + start
 					r = sublime.Region(start, start+1)
 					view().sel().clear()
