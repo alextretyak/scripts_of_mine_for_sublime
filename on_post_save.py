@@ -30,10 +30,10 @@ class Update(sublime_plugin.EventListener):
 		# 	return
 
 		if view.file_name().endswith('.py'):
-			pqi = view.file_name().find("pqmarkup")
+			pqi = view.file_name().replace('\\', '/').find("/pqmarkup/")
 			if pqi != -1:
 				cwd = os.getcwd()
-				os.chdir(view.file_name()[:pqi] + "pqmarkup")
+				os.chdir(view.file_name()[:pqi] + "/pqmarkup")
 				os.system('python runtests.py & pause')
 				os.chdir(cwd)
 				return
