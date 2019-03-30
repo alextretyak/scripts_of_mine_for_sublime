@@ -616,7 +616,8 @@ class f4_command(sublime_plugin.TextCommand):
 			def folder_of_that_day():
 				date_time = find_line_with_date(-1, True)
 				if date_time:
-					dir = os.path.join(os.path.dirname(view().file_name()), "[" + os.path.basename(view().file_name() + "]"), time.strftime("%Y.%m.%d", time.gmtime(date_time))[-7:])
+					stime = time.strftime("%Y.%m.%d", time.gmtime(date_time))
+					dir = os.path.join(os.path.dirname(view().file_name()), "[" + os.path.basename(view().file_name() + "]"), stime[-7:] if int(stime[:4]) < 2020 else stime)
 					if not os.path.isdir(dir):
 						if not sublime.ok_cancel_dialog("Каталог '" + dir + "' не найден! Создать?"):
 							return
