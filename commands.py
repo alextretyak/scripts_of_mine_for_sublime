@@ -508,7 +508,7 @@ class f4_command(sublime_plugin.TextCommand):
 					s=(parse_date_time(self.view.substr(self.view.sel()[1]))
 					 - parse_date_time(self.view.substr(self.view.sel()[0])))
 					assert((s//60//60)*3600 + (s//60%60)*60 + (s%60) == s)
-					view().show_popup(str(s)+"сек<br>"+str(s//60)+"мин "+str(s%60)+"сек<br>"+str(s//60//60)+"ч "+str(s//60%60)+"мин "+str(s%60)+"сек") # \\ s‘сек’
+					view().show_popup(str(s)+"сек<br>"+str(s//60)+"мин "+str(s%60)+"сек<br>"+str(s//60//60)+"ч "+str(s//60%60)+"мин "+str(s%60)+"сек<br>"+str(round(s/(60*60*24), 3))+' дней')
 					return
 
 				# Если курсор/выделение находится внутри [-невыполненной-] задачи, то помечаем её как [+выполненную+]
