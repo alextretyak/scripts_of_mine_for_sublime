@@ -702,7 +702,7 @@ class f4_command(sublime_plugin.TextCommand):
 
 			def check_balance_of_all_char_pairs(): # [-[[[FIX TO ]]]CORRECT https://s.mail.ru/Hyii/M6iAbpmM4-]
 				text = self.view.substr(sublime.Region(0, self.view.size()))
-				class IntException(BaseException):
+				class IntException(Exception):
 					def __init__(self, i):
 						self.i = i
 				try:
