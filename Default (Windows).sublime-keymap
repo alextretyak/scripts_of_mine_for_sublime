@@ -157,4 +157,6 @@
 
 	{ "keys": ["alt+o"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true} },
 	{ "keys": ["ctrl+alt+o"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true} },
+
+	{ "keys": ["insert"],  "command": "unbound" },
 ]
