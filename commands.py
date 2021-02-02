@@ -798,7 +798,7 @@ class f4_command(sublime_plugin.TextCommand):
 							os.rename(clipbrd[1:-1], newname)
 							khrono_log("-'‘" + clipbrd[1:-1] + "’'\n+'‘" + newname + "’'")
 						sublime.active_window().show_input_panel("RENAME", clipbrd[1:-1], on_done, None, None)
-				actions.insert(0, ("FileOps:RENAME", rename))
+				#actions.insert(0, ("FileOps:RENAME", rename))
 
 			sublime.active_window().show_quick_panel([it[0] for it in actions], lambda i: (self.view.run_command("f4", {"redirect_method": actions[i][1].__name__}) if inspect.ismethod(actions[i][1]) else actions[i][1]()) if i != -1 else None)
 			#self.view.show_popup_menu([it[0] for it in actions], lambda i: actions[i][1]() if i != -1 else None)
