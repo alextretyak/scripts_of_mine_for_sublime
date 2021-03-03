@@ -9,7 +9,7 @@ class AddDateTimeCommand(sublime_plugin.TextCommand):
         if pq != None:
             if self.view.substr(sublime.Region(pq.a-2, pq.a)) in ('TC', 'ТС'): # если курсор находится в блоке[/области] точки синхронизации, то повышаем точность вставляемого времени до миллисекунд
                 ms = ("%.3f" % math.modf(time.time())[0])[1:]
-        self.view.run_command("insert_snippet", { "contents": datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S" + ms) })#({# БЫЛО: "("+str(int(time.time()))+"±X)" } )
+        self.view.run_command("insert_snippet", { "contents": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S" + ms) })#({# БЫЛО: "("+str(int(time.time()))+"±X)" } )
     	# [-!{писал в pq.pq, вставил из [./м.txt]:‘...23:33 02.09.2016...’ и задумался: а почему такой формат то? где я это писал, в блокноте, что ли? псевдографику в блокноте? seriously?} проанализировать историю [изменений/]правок предыдущей строки кода {на основе ‘полной[!] истории [изменений/]правок данного файла’[https://www.dropbox.com/sh/bfz3ctnvq0db24t/AACyfEH87Zw2lvNfyY1PLs0ga]} и найти все форматы, в которых вставлялась дата посредством AddDateTimeCommand {скорее всего, также как и сейчас просто сломался box_drawing из-за чего сломался F5 из-за чего пришлось вставлять текущее датавремя через блокнот}-]
         #self.view.run_command("insert_snippet", { "contents": "("+str(int(time.time()))+"±?)" })
 class AddEndDateTimeCommand(sublime_plugin.TextCommand):
@@ -913,8 +913,9 @@ class sha3_ctrl_shift_i(sublime_plugin.TextCommand):
 date_time_formats = []
 # Prepare date_time_formats
 for format in ['%Y.%m.%d, %H:%M:%S',   # 2016.05.22, 10:22:47 — My previous standard timestamp by pressing F5 in SublimeText
-			   '%Y.%m.%d %H:%M:%S',    # 2017.11.11 22:17:02 — My actual standard timestamp by pressing F5 in SublimeText
-			   '%Y.%m.%d %H:%M:%S',    # 2016.05.22 10:22:47 — My [previous/]actual standard timestamp by pressing F5 in SublimeText
+			   '%Y-%m-%d %H:%M:%S',    # 2017-11-11 22:17:02 — My actual standard timestamp by pressing F5 in SublimeText [based on ISO 8601]
+			   '%Y.%m.%d %H:%M:%S',    # 2017.11.11 22:17:02 — My previous standard timestamp by pressing F5 in SublimeText
+			   '%Y.%m.%d %H:%M:%S',    # 2016.05.22 10:22:47 — My previous standard timestamp by pressing F5 in SublimeText
 			   '%Y.%m.%d %H:%M',       # 2016.05.22 10:22 - old
 			   '%H:%M %d.%m.%Y',       # 8:23 10.05.2016 — Notepad.exe on Windows
 			   '%m/%d/%Y %I:%M:%S %p', # 3/23/2016 9:32:25 AM — WPS (ex. Kingsoft) office for Android
