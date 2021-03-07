@@ -916,6 +916,7 @@ for format in ['%Y.%m.%d, %H:%M:%S',   # 2016.05.22, 10:22:47 — My previous st
 			   '%Y-%m-%d %H:%M:%S',    # 2017-11-11 22:17:02 — My actual standard timestamp by pressing F5 in SublimeText [based on ISO 8601]
 			   '%Y.%m.%d %H:%M:%S',    # 2017.11.11 22:17:02 — My previous standard timestamp by pressing F5 in SublimeText
 			   '%Y.%m.%d %H:%M:%S',    # 2016.05.22 10:22:47 — My previous standard timestamp by pressing F5 in SublimeText
+			   '%Y-%m-%d %H:%M',       # 2016-05-22 10:22 - for manually added datetime
 			   '%Y.%m.%d %H:%M',       # 2016.05.22 10:22 - old
 			   '%H:%M %d.%m.%Y',       # 8:23 10.05.2016 — Notepad.exe on Windows
 			   '%m/%d/%Y %I:%M:%S %p', # 3/23/2016 9:32:25 AM — WPS (ex. Kingsoft) office for Android
