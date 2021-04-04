@@ -1560,12 +1560,12 @@ class punto_switcher_emulator_command(sublime_plugin.TextCommand):
 		   #	newtext += TO[i] if i != -1 else c
 		   #/\ — эта версия разрушает ("вyfxfkt" после двойного нажатия Shift+Pause/Break не возвращается само в себя)
 			OT = ("""qwertyuiop[]asdfghjkl'\zxcvbnm,./№`"""
-			      """QWERTYUIOP{}ASDFGHJKL"|ZXCVBNM<>?@#;:%&"""
-			      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЭ/ЯЧСМИТЬБЮ,"№жЖ%?"""
+			      """QWERTYUIOP{}ASDFGHJKL"|ZXCVBNM<>?@#%&"""
+			      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЭ/ЯЧСМИТЬБЮ,"№%?"""
 			      """йцукенгшщзхъфывапролдэ\ячсмитьбю.#ё""")
 			TO = ("""йцукенгшщзхъфывапролдэ\ячсмитьбю.#ё"""
-			      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЭ/ЯЧСМИТЬБЮ,"№жЖ%?"""
-			      """QWERTYUIOP{}ASDFGHJKL"|ZXCVBNM<>?@#;:%&"""
+			      """ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЭ/ЯЧСМИТЬБЮ,"№%?"""
+			      """QWERTYUIOP{}ASDFGHJKL"|ZXCVBNM<>?@#%&"""
 			      """qwertyuiop[]asdfghjkl'\zxcvbnm,./№`""")
 			newtext = ""
 			for c in selected_text:
