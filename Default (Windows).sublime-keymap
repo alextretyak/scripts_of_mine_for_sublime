@@ -159,4 +159,6 @@
 	{ "keys": ["ctrl+alt+o"], "command": "show_overlay", "args": {"overlay": "goto", "show_files": true} },
 
 	{ "keys": ["insert"],  "command": "unbound" },
+
+	{ "keys": ["ctrl+shift+space"], "command": "insert", "args": {"characters": "\u00A0" } },
 ]
