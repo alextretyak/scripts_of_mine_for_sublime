@@ -754,7 +754,7 @@ class f4_command(sublime_plugin.TextCommand):
 					os.system('git push & pause')
 
 			def show_tablets(): # показывает сколько пустых ячеечек в упаковке таблеток Азалептина, который мне прописал психиатр, должно остаться на данный момент [а то я часто забываю, принимал уже таблетку или ещё нет]
-				t = 4.5 + (datetime.date.today() - datetime.date(2018, 10, 11)).days * 2.5
+				t = 9.5 + (datetime.date.today() - datetime.date(2018, 10, 11)).days * 2.5
 				self.view.show_popup('После приёма должно остаться' +
 				               '<br />пустых ячеек:' +
 				               '<br />' +
