@@ -530,7 +530,7 @@ class f4_command(sublime_plugin.TextCommand):
 							self.view.replace(edit, sublime.Region(sq_brackets.b-1, sq_brackets.b), '+')
 							return
 
-			def pq_to_html(habr_html = False):
+			def pq_to_html(habr_html = False, comment = False):
 				pq_text = selected_text
 				whole_file = False
 				if pq_text == "": # находим всю запись в том месте, где стоит курсор
@@ -548,6 +548,11 @@ class f4_command(sublime_plugin.TextCommand):
 					# if habr_html:                      # // dirty hack
 					#     sublime.set_clipboard(pq_html) # \\ (just left it as is)
 					#     return
+
+					def set_habr_html(html):
+						if comment:
+							html = html.replace('<br />', '').replace("</blockquote>\n", '</blockquote>')
+						sublime.set_clipboard(html)
 
 					fname = os.getenv('TEMP') + r'\pq_to_html'
 					#with open(fname + '.html', 'w', encoding = 'utf-8') as f:
@@ -568,13 +573,13 @@ class f4_command(sublime_plugin.TextCommand):
 						html_fname += "/index.html"
 						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py ' + add_cmd_par + ' "' + fname + '.pq.txt" -f "' + html_fname + '"', output) == 0: # файл может быть не сохранён, поэтому используем `fname`, а не `view().file_name()`
 							if habr_html:
-								sublime.set_clipboard(open(html_fname, encoding = 'utf-8').read())
+								set_habr_html(open(html_fname, encoding = 'utf-8').read())
 							else:
 								webbrowser.open(html_fname)
 					else:
 						if exec_command(r'pythonw C:\!!BITBUCKET\pqmarkup\pqmarkup.py ' + add_cmd_par + ' "' + fname + '.pq.txt" -f "' + fname + '.html"', output) == 0:
 							if habr_html:
-								sublime.set_clipboard(open(fname + '.html', encoding = 'utf-8').read())
+								set_habr_html(open(fname + '.html', encoding = 'utf-8').read())
 							else:
 								webbrowser.open(fname + '.html')
 						#else:
@@ -766,6 +771,7 @@ class f4_command(sublime_plugin.TextCommand):
 					#('Редактировать секретное сообщение', edit_secret_message),
 					('pqmarkup:to_html', pq_to_html),
 					('pqmarkup:to_habr_html', lambda: pq_to_html(True)),
+					('pqmarkup:to_habr_html_comment', lambda: pq_to_html(True, True)),
 					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
 					('pqmarkup:remove_[[[comments]]]_and_copy_to_clipboard', pq_remove_comments_and_copy_to_clipboard),
 					('Prev versions', prev_versions),
