@@ -551,7 +551,7 @@ class f4_command(sublime_plugin.TextCommand):
 
 					def set_habr_html(html):
 						if comment:
-							html = html.replace('<br />', '').replace("</blockquote>\n", '</blockquote>')
+							html = html.replace('<br />', '').replace("</blockquote>\n", '</blockquote>').replace("</ol>\n", '</ol>').replace("</ul>\n", '</ul>')
 						sublime.set_clipboard(html)
 
 					fname = os.getenv('TEMP') + r'\pq_to_html'
