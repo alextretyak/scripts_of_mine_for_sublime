@@ -777,7 +777,7 @@ class f4_command(sublime_plugin.TextCommand):
 					('pqmarkup:to_html', pq_to_html),
 					('pqmarkup:to_habr_html', lambda: pq_to_html(True)),
 					('pqmarkup:to_habr_html_comment', lambda: pq_to_html(True, True)),
-					('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
+				#	('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
 					('pqmarkup:remove_[[[comments]]]_and_copy_to_clipboard', pq_remove_comments_and_copy_to_clipboard),
 					('Prev versions', prev_versions),
 					('Файлы этого дня', folder_of_that_day),
