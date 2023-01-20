@@ -989,7 +989,7 @@ def find_ending_bracket(str, i, Lbr = '‘', rbR = '’', error = 'Unpaired `#`'
 		i += 1
 		if i == len(str):
 			if error:
-				raise error.replace('#', Lbr)
+				raise Exception(error.replace('#', Lbr))
 			else:
 				return None
 
