@@ -794,7 +794,7 @@ class f4_command(sublime_plugin.TextCommand):
 					('Beautify table \ Сделать таблицу красивой', beautify_table),
 					('Count total cost/expenses \ Подсчитать сумму расходов', count_total_expenses),
 					('Balance check of all paired spec symbols/characters ‘’(){}[]', check_balance_of_all_char_pairs),
-					('Remove all balanced pairs of spec symbols ‘’(){}[]', self.remove_all_balanced_chars_pairs),
+				#	('Remove all balanced pairs of spec symbols ‘’(){}[]', self.remove_all_balanced_chars_pairs),
 					('Commit\‘Отправить [коммит]’ current\текущий file\файл', commit_current_file),
 					('Edit selection in separate tab/buffer \ Редактировать/‘хочу работать’ с текущим выделением в отдельной вкладке', self.edit_selection_in_separate_buffer),
 					('‘Убрать/скрыть курсор’\‘Hide cursor’', self.hide_cursor),
