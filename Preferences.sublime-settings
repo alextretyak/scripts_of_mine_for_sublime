@@ -11,7 +11,14 @@
 		"симкоманды",
 		"симкоманд",
 		"симкод",
-		"симкоде"
+		"симкоде",
+		"квалификатор",
+		"аллокатор",
+		"аллокатора",
+		"аллокаторах",
+		"аллокаторы",
+		"аллокатором",
+		"аллокаторов"
 	],
 	"color_scheme": "Packages/User/MyDawn.tmTheme",
 	"default_line_ending": "unix",
@@ -32,6 +39,7 @@
 	[
 		"utf"
 	],
+	"indent_subsequent_lines": false,
 	"line_numbers": false,
 	"show_definitions": false,
 	"show_encoding": true,
@@ -39,6 +47,5 @@
 	"tab_size": 4,
 	"theme": "Default.sublime-theme",
 	"translate_tabs_to_spaces": true,
-    "indent_subsequent_lines": false,
 	"update_check": false
 }
