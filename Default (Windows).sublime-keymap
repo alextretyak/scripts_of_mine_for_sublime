@@ -161,4 +161,6 @@
 	{ "keys": ["insert"],  "command": "unbound" },
 
 	{ "keys": ["ctrl+shift+space"], "command": "insert", "args": {"characters": "\u00A0" } },
+	{ "keys": ["ctrl+f4"], "command": " " },
+	{ "keys": ["ctrl+shift+w"], "command": " " },
 ]
