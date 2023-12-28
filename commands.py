@@ -48,7 +48,9 @@ import tempfile, webbrowser
 def exec_command(cmd, output = None):
 	tmpfile, fname = tempfile.mkstemp(text=True)
 	tmpfile = open(tmpfile) #(#, "r+t", encoding = "utf-8")
+	pc_start = time.perf_counter()
 	r = subprocess.call(cmd, stdout = tmpfile, stderr = tmpfile)
+	print('Execution time: %.2f [for command `%s`]' % (time.perf_counter() - pc_start, cmd))
 	tmpfile.seek(0)
 	s = tmpfile.read()
 	print(s, end = '')
