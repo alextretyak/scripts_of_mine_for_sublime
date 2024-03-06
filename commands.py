@@ -1494,6 +1494,12 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 				sublime.active_window().open_file(self.view.substr(sq_brackets)[2:-2])
 				return
 
+		# Check for Markdown links
+		cu_brackets = find_matching_cu_brackets(self.view.sel()[0])
+		if cu_brackets is not None:
+			if self.view.substr(sublime.Region(cu_brackets.begin()+1, cu_brackets.begin()+1+4)) == "http":
+				webbrowser.open(self.view.substr(cu_brackets)[1:-1].split(' ', 1)[0])
+
 """
 		left = right = cursor_pos = self.view.sel()[0].begin()
 		while True:
