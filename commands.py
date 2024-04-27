@@ -537,6 +537,15 @@ class f4_command(sublime_plugin.TextCommand):
 				whole_file = False
 				if pq_text == "": # находим всю запись в том месте, где стоит курсор
 					if view().file_name() and view().file_name().endswith('.pq'): # в файлах .pq всегда берём весь текст (дневники будут в формате .txt или .pq.txt)
+						if view().file_name().startswith(r'C:\!GIT-HUB\alextretyak.ru\comm\compiler.su'):
+							for fmt_char in '*"=/_-.':
+								for fmt in ('(' + fmt_char*2, fmt_char*2 + ')'):
+									r = view().find(fmt, 0, sublime.LITERAL)
+									if r != sublime.Region(-1):
+										view().sel().clear()
+										view().sel().add(r)
+										view().show(r)
+										return
 						pq_text = view().substr(sublime.Region(0, view().size()))
 						whole_file = True
 					else:
