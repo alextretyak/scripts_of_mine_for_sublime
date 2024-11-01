@@ -532,7 +532,7 @@ class f4_command(sublime_plugin.TextCommand):
 							self.view.replace(edit, sublime.Region(sq_brackets.b-1, sq_brackets.b), '+')
 							return
 
-			def pq_to_html(habr_html = False, comment = False):
+			def pq_to_html(habr_html = False, comment = False, to_bbcode = False):
 				pq_text = selected_text
 				whole_file = False
 				if pq_text == "": # находим всю запись в том месте, где стоит курсор
@@ -541,7 +541,8 @@ class f4_command(sublime_plugin.TextCommand):
 							for fmt_char in '*"=/_-.':
 								for fmt in ('(' + fmt_char*2, fmt_char*2 + ')'):
 									r = view().find(fmt, 0, sublime.LITERAL)
-									if r != sublime.Region(-1):
+									if r != sublime.Region(-1) \
+									   and view().substr(r.begin() + (3 if fmt[0] == '(' else -1)) != '.': # ) # for `(...)` in `фн внешняя_функция(...)`
 										view().sel().clear()
 										view().sel().add(r)
 										view().show(r)
@@ -560,9 +561,45 @@ class f4_command(sublime_plugin.TextCommand):
 					#     sublime.set_clipboard(pq_html) # \\ (just left it as is)
 					#     return
 
+					if to_bbcode:
+						pq_text = re.sub(r'\n(\d+\.) ', r'\n\1' + '\xA0', pq_text) # ordered lists
+
 					def set_habr_html(html):
 						if comment:
 							html = html.replace('<br />', '').replace("</blockquote>\n", '</blockquote>').replace("</ol>\n", '</ol>').replace("</ul>\n", '</ul>')
+						if to_bbcode:
+							html = html.replace('<br />', '').replace('&quot;', '"').replace('&lt;', '<').replace('<li>', '').replace('</li>', '')
+							html = re.sub(r'<!--[\s\S]+?-->', '', html) # remove comments
+							simple_tags = {'b', 'i', 'u', 's', 'table', 'tr', 'td', 'ul', 'sup', 'sub'}
+						#	closing_tags = {'a': 'url'}
+							complex_tags = {'a':('url', 'href'), 'spoiler':('spoiler', 'title'), 'font':('color', 'color'), 'abbr':('abbr', 'title')}
+							def repl(m):
+								tag = m.group(1)
+								if tag in simple_tags or (tag[0] == '/' and tag[1:] in simple_tags):
+									return '[' + tag + ']'
+								if tag ==  'blockquote': return  '[quote]'
+								if tag == '/blockquote': return '[/quote]'
+								if tag ==  'code': return  '[font=Courier New]'
+								if tag == '/code': return '[/font]'
+								if tag ==  'source': return  '[code]'
+								if tag == '/source': return '[/code]'
+								if tag[0] == '/' and tag[1:] in complex_tags:
+									return '[/' + complex_tags[tag[1:]][0] + ']'
+								if ' ' in tag:
+									mm = re.match('([^ ]+) ([^=]+)=(.+)$', tag) # `re.fullmatch()` appeared in Python 3.4
+									if mm is not None:
+										if mm.group(1) == 'source':
+											assert(mm.group(2) == 'lang')
+											return '[code]'
+										if mm.group(1) in complex_tags:
+											bbtag, attribute = complex_tags[mm.group(1)]
+											assert(mm.group(2) == attribute)
+											return '[' + bbtag + '=' + mm.group(3) + ']'
+										elif mm.group(1) == 'img':
+											assert(mm.group(2) == 'src')
+											return '[img]' + mm.group(3)[1:-3] + '[/img]'
+								return m.group()
+							html = re.sub(r'<([^>]+)>', repl, html)
 						sublime.set_clipboard(html)
 
 					fname = os.getenv('TEMP') + r'\pq_to_html'
@@ -788,6 +825,7 @@ class f4_command(sublime_plugin.TextCommand):
 					('pqmarkup:to_html', pq_to_html),
 					('pqmarkup:to_habr_html', lambda: pq_to_html(True)),
 				#	('pqmarkup:to_habr_html_comment', lambda: pq_to_html(True, True)),
+					('pqmarkup:to_bbcode', lambda: pq_to_html(True, to_bbcode = True)),
 				#	('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
 					('pqmarkup:remove_[[[comments]]]_and_copy_to_clipboard', pq_remove_comments_and_copy_to_clipboard),
 					('Prev versions', prev_versions),
