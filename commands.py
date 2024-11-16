@@ -663,6 +663,49 @@ class f4_command(sublime_plugin.TextCommand):
 					selected_text = selected_text[0:i] + selected_text[find_ending_sq_bracket(selected_text, i)+1:]
 				sublime.set_clipboard(selected_text)
 
+			def compilersu_markup_to_pq():
+				nonlocal selected_text
+				pq = ''
+				i = 0
+				writepos = 0
+				fmt_trans_dic = {'*':'*', '/':'~', '_':'_', '-':'-', '^':'/\\', 'v':'\\/'}
+				quotes_stack = []
+				while i < len(selected_text):
+					if selected_text[i] == '(' or (selected_text[i] == ')' and i-2 >= writepos):
+						left_br = selected_text[i] == '('
+						dirn = 1 if left_br else -1
+						fmtc = selected_text[i+dirn]
+						if selected_text[i+dirn*2] == fmtc and (fmtc in fmt_trans_dic or fmtc in '"=.'):
+							if not left_br:
+								i -= 2
+							pq += selected_text[writepos:i]
+							i += 3
+							writepos = i
+							if left_br:
+								if fmtc in fmt_trans_dic:
+									pq += fmt_trans_dic[fmtc] + '‘' # ’
+								elif fmtc == '=':
+									i = selected_text.find('==)', i)
+									pq += '#‘' + selected_text[writepos:i] + '’'
+									i += 3
+									writepos = i
+								else:
+									assert(fmtc in '".')
+									pq += '>' if fmtc == '"' else '.' # (
+									j = selected_text.find(fmtc*2 + ')', i)
+									need_quotes = "\n" in selected_text[i:j]
+									pq += '‘' if need_quotes else ' '
+									quotes_stack.append(need_quotes)
+							else:
+								if fmtc in '".':
+									if not quotes_stack.pop():
+										continue
+								pq += '’'
+							continue
+					i += 1
+				pq += selected_text[writepos:]
+				sublime.set_clipboard(pq)
+
 			def prev_versions():
 				dir = view().file_name().replace("Dropbox\\", "Dropbox\\.-\\", 1).replace("B:\\", "B:\\.-\\", 1) + '-'
 				os.startfile(os.path.join(dir, os.listdir(dir)[0]))
@@ -828,6 +871,7 @@ class f4_command(sublime_plugin.TextCommand):
 					('pqmarkup:to_bbcode', lambda: pq_to_html(True, to_bbcode = True)),
 				#	('pqmarkup:remove_[[[[comments]]]]_and_copy_to_clipboard', pq_remove_deep_comments_and_copy_to_clipboard),
 					('pqmarkup:remove_[[[comments]]]_and_copy_to_clipboard', pq_remove_comments_and_copy_to_clipboard),
+					('compiler.su markup to pq', compilersu_markup_to_pq),
 					('Prev versions', prev_versions),
 					('Файлы этого дня', folder_of_that_day),
 					(box_drawing_chars_1, lambda: box_drawing_chars(box_drawing_chars_1)),
