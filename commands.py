@@ -543,6 +543,8 @@ class f4_command(sublime_plugin.TextCommand):
 									r = view().find(fmt, 0, sublime.LITERAL)
 									if r != sublime.Region(-1) \
 									   and view().substr(r.begin() + (3 if fmt[0] == '(' else -1)) != '.': # ) # for `(...)` in `фн внешняя_функция(...)`
+										if fmt == '(--' and view().substr(sublime.Region(r.begin()-3, r.begin())) == 'if ': # for `if (--nesting_level == 0)` # )
+											continue
 										view().sel().clear()
 										view().sel().add(r)
 										view().show(r)
