@@ -670,36 +670,36 @@ class f4_command(sublime_plugin.TextCommand):
 				pq = ''
 				i = 0
 				writepos = 0
-				fmt_trans_dic = {'*':'*', '/':'~', '_':'_', '-':'-', '^':'/\\', 'v':'\\/'}
+				fmt_trans_dic = {'**':'*', '//':'~', '__':'_', '--':'-', '/\\':'/\\', '\\/':'\\/'}
 				quotes_stack = []
 				while i < len(selected_text):
 					if selected_text[i] == '(' or (selected_text[i] == ')' and i-2 >= writepos):
 						left_br = selected_text[i] == '('
-						dirn = 1 if left_br else -1
-						fmtc = selected_text[i+dirn]
-						if selected_text[i+dirn*2] == fmtc and (fmtc in fmt_trans_dic or fmtc in '"=.'):
+						offset = 1 if left_br else -2
+						fmt = selected_text[i+offset:i+offset+2]
+						if fmt in fmt_trans_dic or fmt in ('""', '==', '..'):
 							if not left_br:
 								i -= 2
 							pq += selected_text[writepos:i]
 							i += 3
 							writepos = i
 							if left_br:
-								if fmtc in fmt_trans_dic:
-									pq += fmt_trans_dic[fmtc] + '‘' # ’
-								elif fmtc == '=':
+								if fmt in fmt_trans_dic:
+									pq += fmt_trans_dic[fmt] + '‘' # ’
+								elif fmt == '==':
 									i = selected_text.find('==)', i)
 									pq += '#‘' + selected_text[writepos:i] + '’'
 									i += 3
 									writepos = i
 								else:
-									assert(fmtc in '".')
-									pq += '>' if fmtc == '"' else '.' # (
-									j = selected_text.find(fmtc*2 + ')', i)
+									assert(fmt in ('""', '..'))
+									pq += '>' if fmt == '""' else '.' # (
+									j = selected_text.find(fmt + ')', i)
 									need_quotes = "\n" in selected_text[i:j]
 									pq += '‘' if need_quotes else ' '
 									quotes_stack.append(need_quotes)
 							else:
-								if fmtc in '".':
+								if fmt in ('""', '..'):
 									if not quotes_stack.pop():
 										continue
 								pq += '’'
