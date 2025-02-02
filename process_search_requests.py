@@ -22,7 +22,8 @@ if not os.path.isfile(fname):
 	try:
 		r = requests.get(("https://www.google.ru/search?num=20&q=" if sys.argv[1] == "GOOGLE" else
 		                  "https://yandex.ru/search/?text=") + urllib.parse.quote_plus(sys.argv[2]),
-		headers={'user-agent': 'Mozilla/5.0'+0*' (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'} if sys.argv[1] == "GOOGLE" else # при user-agent по умолчанию (python-requests/2.10.0) почему-то возвращается страница в кодировке cp1251 (зато размер 50Кб, а так 86Кб {но с ...Chrome... user-agent вообще 293Кб})
+		headers={'user-agent': 'Lynx/2.9.2 libwww-FM/2.14 SSL-MM/1.4.1 OpenSSL/3.4.0'} # [https://github.com/benbusby/whoogle-search/commit/6f1e1e6847640c611e9fe21e123d4f63e4c56aa6 <- https://github.com/benbusby/whoogle-search/issues/1211 <- google:‘requests "If you're having trouble accessing Google Search"’]
+		    if sys.argv[1] == "GOOGLE" else # при user-agent по умолчанию (python-requests/2.10.0) почему-то возвращается страница в кодировке cp1251 (зато размер 50Кб, а так 86Кб {но с ...Chrome... user-agent вообще 293Кб})
 			{'User-Agent': 'Opera/9.80 (Windows NT 6.2; WOW64) Presto/2.12.388 Version/12.16',
 			'Accept': 'text/html, application/xml;q=0.9, application/xhtml+xml, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1',
 			'Accept-Language': 'ru-RU,ru;q=0.9,en;q=0.8',
@@ -30,7 +31,7 @@ if not os.path.isfile(fname):
 			}
 		)
 		r.raise_for_status()
-		open(fname, "wb").write(r.content)
+		open(fname, "w", encoding='utf-8').write(r.text)
 	except:
 		MessageBox(None, sys.argv[2], 'HTTP Error', 0)
 		exit(1)
