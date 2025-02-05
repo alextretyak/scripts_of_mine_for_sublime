@@ -688,7 +688,7 @@ class f4_command(sublime_plugin.TextCommand):
 									pq += fmt_trans_dic[fmt] + '‘' # ’
 								elif fmt == '==':
 									i = selected_text.find('==)', i)
-									pq += '#‘' + selected_text[writepos:i] + '’'
+									pq += '#‘' + selected_text[writepos:i] + '’' if selected_text[writepos] == "\n" else '`' + selected_text[writepos:i] + '`'
 									i += 3
 									writepos = i
 								else:
