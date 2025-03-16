@@ -13,7 +13,7 @@ class Update(sublime_plugin.EventListener):
 					break
 				e = commands.find_ending_bracket(text, i + len(what_find) + 1)
 				te = text[len(what_find)+i+2:e]
-				fname = R"C:\cloud.mail.ru\BackUp\WebPages\ПОИСК" + "\\" + destdir + "\\" + te.replace('"', "''").replace(':', '꞉').replace('|', '│').replace('*', '∗').replace('/', '⁄') + ".html"
+				fname = R"C:\cloud.mail.ru\BackUp\WebPages\ПОИСК" + "\\" + destdir + "\\" + te.replace('"', "''").replace(':', '꞉').replace('|', '│').replace('*', '∗').replace('/', '⧸').replace('\\', '⧹') + ".html"
 				if not os.path.isfile(fname):
 					subprocess.Popen(["pythonw", sublime.packages_path() + R"\User\process_search_requests.py", destdir, te, fname])
 				i = e + 1
