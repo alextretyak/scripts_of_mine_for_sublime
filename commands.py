@@ -1003,7 +1003,8 @@ class sha3_ctrl_shift_i(sublime_plugin.TextCommand):
 		for en in ['utf-8']:#, '['*0+'UTF', 'cyrillic', 'maccyrillic', 'cyrillic-asian', 'koi8_u', 'IBM855', 'IBM866', 'windows-1251', 'koi8_r', 'utf8']: # TODO: ADD 'ruscii[=ibm1125|cp866u]'
 			text_as_binary = selected_text.encode(en, errors = 'ignore')
 			hash =(as_hex_str(CompactFIPS202.SHA3_512(text_as_binary)) +
-			'\n' + as_hex_str(CompactFIPS202.Keccak(576, 1024, text_as_binary, 0x01, 512//8)))
+			"\n" + as_hex_str(CompactFIPS202.Keccak(576, 1024, text_as_binary, 0x01, 512//8)) +
+			"\n" + as_hex_str(CompactFIPS202.SHA3_512(text_as_binary + text_as_binary[::-1])))
 		#	if len(selected_text) < len(hash):
 		#		hash = hash[:len(selected_text)]
 			if hash not in dict:
