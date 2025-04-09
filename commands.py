@@ -1692,7 +1692,8 @@ class OnLoad(sublime_plugin.EventListener):
 			view.run_command("set_file_type", {"syntax": "Packages/pqmarkup/pq.sublime-syntax"})
 
 		if view.find("[\t ]$", 0) != sublime.Region(-1):
-			sublime.error_message("Trailing white space detected!")
+			if view.find("\0", 0, sublime.LITERAL) == sublime.Region(-1): # check for binary files
+				sublime.error_message("Trailing white space detected!")
 
 
 class left_right_command(sublime_plugin.TextCommand): # чтобы гулять клавишами влево/вправо по пробельным отступам было также удобно, как и по табулированным отступам
