@@ -124,7 +124,7 @@ box_drawing_chars_DEFAULT = box_drawing_chars_1
 def box_drawing(text, box_drawing_chars = box_drawing_chars_DEFAULT):
 	box_drawing_chars_iter = iter(box_drawing_chars.split(" "))
 	patterns_str = """
- ●●  x   xx ●●● xxx xxx ●●●  ● 
+ ●●  x   xx ●●● xxx xxx ●●●  ● \n\
 ●─● ●─● ●─x ●─● ●─● ●─● ●─● ●─●
  ●●  x   xx  x  x●● ●●x  ●  ●●●
 
@@ -140,7 +140,7 @@ x●x
 ●┼●
 x●x
 
-|| 
+|| \n\
 .└.
 \..
 """
@@ -257,17 +257,17 @@ check_box_drawing("""
    S E
 B   │   L
 U ──┼── L
- T  │  E 
+ T  │  E \n\
   TON C
 """)
 sassert(box_drawing("""
 B   *   L
 U ──┼── L
- T  *  E 
+ T  *  E \n\
 """),"""
 B   │   L
 U ──┼── L
- T  │  E 
+ T  │  E \n\
 """)
 '''sassert(box_drawing("""
  │
@@ -1054,7 +1054,7 @@ def parse_date_time(str, precheck_already_made = False):
 	r = re.match(r'\((\d{9,10})±[?хxХX]\)$', str)
 	if r:
 		return int(r.group(1))
-		
+
 	for format, regexp in date_time_formats:
 		if regexp.match(str):
 			if str[-1] == "\n": # почему-то re.match("word$","word\n") возвращает match, поэтому исключаем явно такую ситуацию
@@ -1352,7 +1352,7 @@ class search_in_records(sublime_plugin.TextCommand):
 				def process_fcontents(start, end):
 					nonlocal log
 					if fcontents[start:end].casefold().find(word) != -1:
-						log += '[./' + fname + ':‘' + fcontents[prev.pos:prev.next_line_pos] + '’] ' + fcontents[start:end].rstrip('\n') + "\n\n"					
+						log += '[./' + fname + ':‘' + fcontents[prev.pos:prev.next_line_pos] + '’] ' + fcontents[start:end].rstrip('\n') + "\n\n"
 				# Ищем word в файле fname [с содержимым fcontents]
 				rec = Record()
 				rec.next()
@@ -1632,7 +1632,7 @@ def are_all_selections_equal(view):
         if view.substr(view.sel()[i]) != first_sel_str:
             return None
     return first_sel_str
- 
+
 class cut_copy_one_command(sublime_plugin.TextCommand):
     def run(self, edit, command):
         str = are_all_selections_equal(self.view)
@@ -1690,6 +1690,9 @@ class OnLoad(sublime_plugin.EventListener):
 		#assert(view.name() == os.path.basename(view.file_name())) [-assert(v.path_name.file_name == v.file_name)-]
 		if view.file_name().endswith(".txt") and os.path.basename(view.file_name()) in os.listdir(dropbox_dir()):
 			view.run_command("set_file_type", {"syntax": "Packages/pqmarkup/pq.sublime-syntax"})
+
+		if view.find("[\t ]$", 0) != sublime.Region(-1):
+			sublime.error_message("Trailing white space detected!")
 
 
 class left_right_command(sublime_plugin.TextCommand): # чтобы гулять клавишами влево/вправо по пробельным отступам было также удобно, как и по табулированным отступам
