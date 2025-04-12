@@ -1694,6 +1694,12 @@ class OnLoad(sublime_plugin.EventListener):
 		if view.find("[\t ]$", 0) != sublime.Region(-1):
 			if view.find("\0", 0, sublime.LITERAL) == sublime.Region(-1): # check for binary files
 				sublime.error_message("Trailing white space detected!")
+		else:
+			view.settings().set('there_was_no_trailing_white_space', True)
+
+	def on_pre_save(self, view):
+		if view.settings().get('there_was_no_trailing_white_space', False):
+			view.run_command("trim_trailing_white_space")
 
 
 class left_right_command(sublime_plugin.TextCommand): # чтобы гулять клавишами влево/вправо по пробельным отступам было также удобно, как и по табулированным отступам
