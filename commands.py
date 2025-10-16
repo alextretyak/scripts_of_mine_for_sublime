@@ -4,6 +4,10 @@ import sublime, sublime_plugin, os, re, sys, binascii, urllib, subprocess, calen
 import datetime, getpass
 class AddDateTimeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
+        if self.view.file_name().endswith("_template.html"):
+            self.view.run_command("save")
+            subprocess.call(['pythonw', os.path.join(os.path.dirname(view().file_name()), '.py')], cwd = os.path.dirname(view().file_name()))
+            return
         ms = ""
         pq = find_matching_paired_quotes(self.view.sel()[0])
         if pq != None:
