@@ -6,7 +6,7 @@ class AddDateTimeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         if self.view.file_name().endswith("_template.html"):
             self.view.run_command("save")
-            subprocess.call(['pythonw', os.path.join(os.path.dirname(view().file_name()), '.py')], cwd = os.path.dirname(view().file_name()))
+            exec_command(['pythonw', os.path.join(os.path.dirname(view().file_name()), '.py')], cwd = os.path.dirname(view().file_name()))
             return
         ms = ""
         pq = find_matching_paired_quotes(self.view.sel()[0])
@@ -49,11 +49,11 @@ def hard_assert(str1, str2):
 	return sassert(str1, str2, True)
 
 import tempfile, webbrowser
-def exec_command(cmd, output = None):
+def exec_command(cmd, output = None, *, cwd = None):
 	tmpfile, fname = tempfile.mkstemp(text=True)
 	tmpfile = open(tmpfile) #(#, "r+t", encoding = "utf-8")
 	pc_start = time.perf_counter()
-	r = subprocess.call(cmd, stdout = tmpfile, stderr = tmpfile)
+	r = subprocess.call(cmd, stdout = tmpfile, stderr = tmpfile, cwd = cwd)
 	print('Execution time: %.2f [for command `%s`]' % (time.perf_counter() - pc_start, cmd))
 	tmpfile.seek(0)
 	s = tmpfile.read()
