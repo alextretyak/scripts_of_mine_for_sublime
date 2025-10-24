@@ -1,4 +1,4 @@
-import sublime, sublime_plugin, os, re, sys, binascii, urllib, subprocess, calendar, time, copy, unicodedata, inspect, math
+import sublime, sublime_plugin, os, re, sys, binascii, urllib, subprocess, calendar, time, copy, unicodedata, inspect, math, collections
 
 #ИЗ http://stackoverflow.com/questions/11879481/can-i-add-date-time-for-sublime-snippet
 import datetime, getpass
@@ -1590,6 +1590,24 @@ class f12_goto_definition_command(sublime_plugin.TextCommand):
 				return
 			if self.view.substr(sublime.Region(sq_brackets.begin()+1, sq_brackets.begin()+2)) == '"': # this is absolute path (which is copied to clipboard in Windows after click on context menu item ‘Копировать как путь’)
 				sublime.active_window().open_file(self.view.substr(sq_brackets)[2:-2])
+				return
+			if self.view.substr(sublime.Region(sq_brackets.begin()+1, sq_brackets.begin()+1+6)) == "DSC_00": # this is a photo taken with my mobile phone
+				fname = self.view.substr(sq_brackets)[1:-1]
+				path = r'C:\cloud.mail.ru\BackUp\ИЗ МОЕГО ТЕЛЕФОНА2'
+				dirs = []
+				# for d in os.scandir(path): # for Python 3.5+
+				# 	if d.is_dir() and os.path.isdir(os.path.join(path, d.name, 'Photos')):
+				# 		dirs.append(collections.namedtuple('Dir', 'name ctime')(d.name, d.stat().st_ctime))
+				for d_name in os.listdir(path):
+					if os.path.isdir(os.path.join(path, d_name, 'Photos')):
+						dirs.append(collections.namedtuple('Dir', 'name ctime')(d_name, os.path.getctime(os.path.join(path, d_name))))
+				for d in sorted(dirs, key = lambda d: d.ctime, reverse = True):
+					n = os.path.join(path, d.name, 'Photos', fname)
+					if os.path.isfile(n):
+						sublime.active_window().open_file(n)
+						break
+				else:
+					sublime.error_message(fname + ' is not found!')
 				return
 
 		# Check for Markdown links
