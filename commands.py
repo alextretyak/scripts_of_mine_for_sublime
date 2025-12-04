@@ -1299,8 +1299,23 @@ class last_log_ctrl_shift_l(sublime_plugin.TextCommand):
 		if not tasks_list:
 			tasks_str += "[пусто]\n"
 
-		# Открываем новый буфер/окно с результатами поиска
-		newfile = sublime.active_window().new_file()
+		# Открываем буфер со списком дел
+		newfile = None
+		for w in sublime.windows():
+			for view in w.views():
+				if view.is_read_only() and view.name() == "ДЕЛА":
+					w.focus_view(view)
+					view.set_read_only(False)
+					view.erase(edit, sublime.Region(0, view.size()))
+					view.set_viewport_position((0, 0))
+					view.sel().clear()
+					view.sel().add(sublime.Region(0))
+					newfile = view
+					break
+			if newfile is not None:
+				break
+		if newfile is None: # или создаём новый буфер при необходимости
+			newfile = sublime.active_window().new_file()
 		newfile.set_scratch(True)
 		newfile.insert(edit, 0, calendarstr + tasks_str
 			+ "\n\nПОСЛЕДНИЕ ЗАПИСИ:\n\n" + (
