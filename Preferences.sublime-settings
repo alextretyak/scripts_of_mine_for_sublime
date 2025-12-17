@@ -49,5 +49,6 @@
 	"theme": "Default.sublime-theme",
 	"translate_tabs_to_spaces": true,
     "hot_exit": false,
+    "remember_open_files": true,
 	"update_check": false
 }
