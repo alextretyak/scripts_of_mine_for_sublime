@@ -536,6 +536,17 @@ class f4_command(sublime_plugin.TextCommand):
 							self.view.replace(edit, sublime.Region(sq_brackets.b-1, sq_brackets.b), '+')
 							return
 
+				# Отображение долга конкретного/-му человека/-у
+				if self.view.file_name().endswith(r'\k.txt') and len(selected_text) > 3 and self.view.substr(self.view.sel()[0].a - 1) == '#':
+					total = 0
+					for line in view().substr(sublime.Region(0, view().size())).split("\n"):
+						if line.endswith(' #' + selected_text):
+							date_time, n0, n, _ = line.split(' ', 3)
+							assert(n0 == '0')
+							total += float(n)
+					self.view.show_popup(str(round(total)))
+					return
+
 			def pq_to_html(habr_html = False, comment = False, to_bbcode = False):
 				pq_text = selected_text
 				whole_file = False
