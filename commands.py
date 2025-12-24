@@ -4,7 +4,7 @@ import sublime, sublime_plugin, os, re, sys, binascii, urllib, subprocess, calen
 import datetime, getpass
 class AddDateTimeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        if self.view.file_name().endswith("_template.html"):
+        if (self.view.file_name() or '').endswith("_template.html"):
             self.view.run_command("save")
             exec_command(['pythonw', os.path.join(os.path.dirname(view().file_name()), '.py')], cwd = os.path.dirname(view().file_name()))
             return
@@ -537,7 +537,7 @@ class f4_command(sublime_plugin.TextCommand):
 							return
 
 				# Отображение долга конкретного/-му человека/-у
-				if self.view.file_name().endswith(r'\k.txt') and len(selected_text) > 3 and self.view.substr(self.view.sel()[0].a - 1) == '#':
+				if (self.view.file_name() or '').endswith(r'\k.txt') and len(selected_text) > 3 and self.view.substr(self.view.sel()[0].a - 1) == '#':
 					total = 0
 					for line in view().substr(sublime.Region(0, view().size())).split("\n"):
 						if line.endswith(' #' + selected_text):
