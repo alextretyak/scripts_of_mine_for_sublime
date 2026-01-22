@@ -24,6 +24,7 @@
 	"color_scheme": "Packages/User/MyDawn.tmTheme",
 	"default_line_ending": "unix",
 	"dictionary": "Packages/Language - RE/russian_english.dic",
+    "spell_check": true,
 	"enable_hexadecimal_encoding": false,
 	"fallback_encoding": "Cyrillic (Windows 1251)",
 	"font_face": "",
