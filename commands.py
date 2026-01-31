@@ -537,7 +537,7 @@ class f4_command(sublime_plugin.TextCommand):
 							return
 
 				# Отображение долга конкретного/-му человека/-у
-				if (self.view.file_name() or '').endswith(r'\k.txt') and len(selected_text) > 3 and self.view.substr(self.view.sel()[0].a - 1) == '#':
+				if (self.view.file_name() or '').endswith(r'\k.txt') and len(selected_text) > 3 and self.view.substr(self.view.sel()[0].begin() - 1) == '#':
 					total = 0
 					for line in view().substr(sublime.Region(0, view().size())).split("\n"):
 						if line.endswith(' #' + selected_text):
