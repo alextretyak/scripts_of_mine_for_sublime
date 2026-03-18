@@ -536,16 +536,22 @@ class f4_command(sublime_plugin.TextCommand):
 							self.view.replace(edit, sublime.Region(sq_brackets.b-1, sq_brackets.b), '+')
 							return
 
-				# Отображение долга конкретного/-му человека/-у
-				if (self.view.file_name() or '').endswith(r'\k.txt') and len(selected_text) > 3 and self.view.substr(self.view.sel()[0].begin() - 1) == '#':
-					total = 0
-					for line in view().substr(sublime.Region(0, view().size())).split("\n"):
-						if line.endswith(' #' + selected_text):
-							date_time, n0, n, _ = line.split(' ', 3)
-							assert(n0 == '0')
-							total += float(n)
-					self.view.show_popup(str(round(total)))
-					return
+				if (self.view.file_name() or '').endswith(r'\k.txt'):
+					# Отображение долга конкретного/-му человека/-у
+					if len(selected_text) > 3 and self.view.substr(self.view.sel()[0].begin() - 1) == '#':
+						total = 0
+						for line in view().substr(sublime.Region(0, view().size())).split("\n"):
+							if line.endswith(' #' + selected_text):
+								date_time, n0, n, _ = line.split(' ', 3)
+								assert(n0 == '0')
+								total += float(n)
+						self.view.show_popup(str(round(total)))
+						return
+					# Расчёт суммы всех позиций в чеке для текущей строки
+					if self.view.substr(self.view.sel()[0].a - 1) == '₽' or \
+					   self.view.substr(self.view.sel()[0].a    ) == '₽':
+						self.view.show_popup('%.2f' % sum(eval(c) for c in re.findall(r'((?:\d+\*)?\d+(?:\.\d+)?)₽', view().substr(view().line(self.view.sel()[0].a)))))
+						return
 
 			def pq_to_html(habr_html = False, comment = False, to_bbcode = False):
 				pq_text = selected_text
