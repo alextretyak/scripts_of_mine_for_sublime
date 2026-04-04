@@ -550,7 +550,13 @@ class f4_command(sublime_plugin.TextCommand):
 					# Расчёт суммы всех позиций в чеке для текущей строки
 					if self.view.substr(self.view.sel()[0].a - 1) == '₽' or \
 					   self.view.substr(self.view.sel()[0].a    ) == '₽':
-						self.view.show_popup('%.2f' % sum(eval(c) for c in re.findall(r'((?:\d+\*)?\d+(?:\.\d+)?)₽', view().substr(view().line(self.view.sel()[0].a)))))
+						line = view().substr(view().line(self.view.sel()[0].a))
+						s = sum(eval(c) for c in re.findall(r'((?:\d+\*)?\d+(?:\.\d+)?)₽', line))
+
+						def isclose(a, b, *, rel_tol=1e-09, abs_tol=0.0): # `math.isclose()` appeared in Python 3.5
+							return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+						self.view.show_popup('%.2f (%sok)' % (s, 'NOT ' * (not isclose(s, float(line.split(' ')[1]) or float(line.split(' ')[2])))))
 						return
 
 			def pq_to_html(habr_html = False, comment = False, to_bbcode = False):
