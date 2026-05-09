@@ -542,9 +542,9 @@ class f4_command(sublime_plugin.TextCommand):
 						total = 0
 						for line in view().substr(sublime.Region(0, view().size())).split("\n"):
 							if line.endswith(' #' + selected_text):
-								date_time, n0, n, _ = line.split(' ', 3)
+								date_time, n0, n, n2, _ = line.split(' ', 4)
 								assert(n0 == '0')
-								total += float(n)
+								total += float(n) or float(n2)
 						self.view.show_popup(str(round(total)))
 						return
 					# Расчёт суммы всех позиций в чеке для текущей строки
