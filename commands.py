@@ -1832,6 +1832,7 @@ class new_find_all_under_command(sublime_plugin.TextCommand):
 class slash_key_command(sublime_plugin.TextCommand):
 	def run(self, edit):
 		if self.view.sel()[0].size() == 0:
-			self.view.insert(edit, self.view.sel()[0].b, '/')
+			for sel in self.view.sel():
+				self.view.insert(edit, sel.b, '/')
 		else:
 			self.view.run_command("toggle_comment", { "block": False })
